@@ -93,8 +93,6 @@ model Campaign {
   user           User              @relation(fields: [userId], references: [id])
   paymentMethods CampaignBanking[]
   donations      Donation[]
-  updates        Update[]
-  beneficiaries  Beneficiary[]
 }
 
 model CampaignBanking {
@@ -143,21 +141,3 @@ model DonationVerification {
   admin      User     @relation(fields: [adminId], references: [id])
 }
 
-model Update {
-  id         Int      @id @default(autoincrement())
-  title      String
-  content    String
-  mediaUrl   String?
-  createdAt  DateTime @default(now())
-  campaignId Int
-  campaign   Campaign @relation(fields: [campaignId], references: [id])
-}
-
-model Beneficiary {
-  id               Int      @id @default(autoincrement())
-  fullName         String
-  relationship     String
-  governmentIdHash String
-  campaignId       Int
-  campaign         Campaign @relation(fields: [campaignId], references: [id])
-}
