@@ -1,0 +1,163 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+  output          = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id   Int    @id @default(autoincrement())
+  name String
+}
+
+model User {
+  id                String                 @id
+  name              String
+  email             String
+  emailVerified     Boolean
+  image             String?
+  createdAt         DateTime
+  updatedAt         DateTime
+  sessions          Session[]
+  accounts          Account[]
+  campaigns         Campaign[]
+  verifiedDonations DonationVerification[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+
+model Campaign {
+  id             Int               @id @default(autoincrement())
+  title          String
+  description    String
+  goalAmount     Float
+  currency       String            @default("USD")
+  category       String
+  status         String            @default("Active")
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @default(now())
+  userId         String
+  user           User              @relation(fields: [userId], references: [id])
+  paymentMethods CampaignBanking[]
+  donations      Donation[]
+  updates        Update[]
+  beneficiaries  Beneficiary[]
+}
+
+model CampaignBanking {
+  id             Int        @id @default(autoincrement())
+  methodType     String // "Bank", "Crypto", "MobileMoney"
+  bankName       String?
+  accountName    String?
+  accountNumber  String?
+  iban           String?
+  cryptoCurrency String?
+  cryptoAddress  String?
+  mobileProvider String?
+  mobileNumber   String?
+  isVerified     Boolean    @default(false)
+  createdAt      DateTime   @default(now())
+  campaignId     Int
+  campaign       Campaign   @relation(fields: [campaignId], references: [id])
+  Donation       Donation[]
+}
+
+model Donation {
+  id              Int                   @id @default(autoincrement())
+  donorName       String
+  donorEmail      String?
+  amount          Float
+  currency        String
+  screenshotPath  String
+  status          String                @default("Pending") // "Pending", "Verified", "Rejected"
+  donatedAt       DateTime              @default(now())
+  verifiedAt      DateTime?
+  campaignId      Int
+  paymentMethodId Int?
+  campaign        Campaign              @relation(fields: [campaignId], references: [id])
+  paymentMethod   CampaignBanking?      @relation(fields: [paymentMethodId], references: [id])
+  verification    DonationVerification?
+}
+
+model DonationVerification {
+  id         Int      @id @default(autoincrement())
+  status     String // "Approved", "Rejected"
+  notes      String?
+  verifiedAt DateTime @default(now())
+  donationId Int      @unique
+  donation   Donation @relation(fields: [donationId], references: [id])
+  adminId    String
+  admin      User     @relation(fields: [adminId], references: [id])
+}
+
+model Update {
+  id         Int      @id @default(autoincrement())
+  title      String
+  content    String
+  mediaUrl   String?
+  createdAt  DateTime @default(now())
+  campaignId Int
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+}
+
+model Beneficiary {
+  id               Int      @id @default(autoincrement())
+  fullName         String
+  relationship     String
+  governmentIdHash String
+  campaignId       Int
+  campaign         Campaign @relation(fields: [campaignId], references: [id])
+}

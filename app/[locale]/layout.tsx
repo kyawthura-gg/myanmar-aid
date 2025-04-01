@@ -1,0 +1,50 @@
+import type React from "react";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { NextIntlClientProvider } from "next-intl";
+import { inter, notoSansMyanmar } from "@/lib/fonts";
+import "@/app/globals.css";
+
+export const metadata: Metadata = {
+  title: "Myanmar Aid Connect",
+  description:
+    "Direct peer-to-peer aid platform for Myanmar earthquake victims",
+};
+
+const locales = ["en", "mm"];
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
+
+export default async function RootLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: { locale: string };
+}) {
+  const locale = (await params).locale;
+  if (!locales.includes(locale)) {
+    notFound();
+  }
+
+  let messages;
+  try {
+    messages = (await import(`@/lib/i18n/locales/${locale}.json`)).default;
+  } catch (error) {
+    notFound();
+  }
+
+  return (
+    <html lang={locale}>
+      <body
+        className={`${inter.variable} ${notoSansMyanmar.variable} font-sans`}
+      >
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
+}
