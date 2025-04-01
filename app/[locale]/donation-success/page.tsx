@@ -1,7 +1,14 @@
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { CheckCircle } from "lucide-react"
+import Link from "next/link"
 
 export default function DonationSuccessPage() {
   return (
@@ -18,7 +25,8 @@ export default function DonationSuccessPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-muted-foreground">
-            Your donation proof has been submitted successfully. The recipient will be notified of your contribution.
+            Your donation proof has been submitted successfully. The recipient
+            will be notified of your contribution.
           </p>
 
           <div className="rounded-lg border p-4 bg-muted/50">
@@ -47,4 +55,3 @@ export default function DonationSuccessPage() {
     </div>
   )
 }
-

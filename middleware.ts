@@ -1,4 +1,4 @@
-import createMiddleware from "next-intl/middleware";
+import createMiddleware from "next-intl/middleware"
 
 export default createMiddleware({
   // A list of all locales that are supported
@@ -9,9 +9,9 @@ export default createMiddleware({
 
   // Locales that are considered similar (for example for similar date formats)
   localeDetection: true,
-});
+})
 
 export const config = {
   // Skip all paths that should not be internationalized
   matcher: ["/((?!api|_next|.*\\..*).*)"],
-};
+}

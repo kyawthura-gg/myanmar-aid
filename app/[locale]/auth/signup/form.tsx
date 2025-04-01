@@ -1,26 +1,26 @@
-"use client";
+"use client"
 
-import { toast } from "sonner";
+import { toast } from "sonner"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { signUp } from "@/lib/auth-client";
-import Link from "next/link";
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { signUp } from "@/lib/auth-client"
+import Link from "next/link"
 
 export function RegisterForm() {
   function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const data = new FormData(form);
-    console.log(data);
+    e.preventDefault()
+    const form = e.target as HTMLFormElement
+    const data = new FormData(form)
+    console.log(data)
     signUp.email(
       {
         name: data.get("name") as string,
@@ -29,14 +29,14 @@ export function RegisterForm() {
       },
       {
         onError: (error) => {
-          console.warn(error);
-          toast.error(error.error.message);
+          console.warn(error)
+          toast.error(error.error.message)
         },
         onSuccess: () => {
-          toast.success("Account has been created!");
+          toast.success("Account has been created!")
         },
       }
-    );
+    )
   }
 
   return (
@@ -87,5 +87,5 @@ export function RegisterForm() {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

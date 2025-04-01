@@ -1,25 +1,25 @@
-"use client";
+"use client"
 
-import { toast } from "sonner";
+import { toast } from "sonner"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { signIn } from "@/lib/auth-client";
-import Link from "next/link";
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { signIn } from "@/lib/auth-client"
+import Link from "next/link"
 
 export function LoginForm() {
   function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const data = new FormData(form);
+    e.preventDefault()
+    const form = e.target as HTMLFormElement
+    const data = new FormData(form)
     signIn.email(
       {
         email: data.get("email") as string,
@@ -27,14 +27,14 @@ export function LoginForm() {
       },
       {
         onError: (error) => {
-          console.warn(error);
-          toast.error(error.error.message);
+          console.warn(error)
+          toast.error(error.error.message)
         },
         onSuccess: () => {
-          toast.success("You have been logged in!");
+          toast.success("You have been logged in!")
         },
       }
-    );
+    )
   }
 
   return (
@@ -122,5 +122,5 @@ export function LoginForm() {
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }

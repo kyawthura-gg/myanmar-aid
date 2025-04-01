@@ -18,7 +18,11 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        sans: ["var(--font-inter)", "var(--font-noto-sans-myanmar)", "sans-serif"],
+        sans: [
+          "var(--font-inter)",
+          "var(--font-noto-sans-myanmar)",
+          "sans-serif",
+        ],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -78,4 +82,3 @@ module.exports = {
   },
   plugins: [require("tailwindcss-animate")],
 }
-

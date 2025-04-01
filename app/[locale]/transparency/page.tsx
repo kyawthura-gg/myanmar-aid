@@ -1,10 +1,16 @@
-import Link from "next/link"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowLeft, CheckCircle, Clock, ExternalLink } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import Link from "next/link"
 
 // Mock data for donations
 const recentDonations = [
@@ -78,15 +84,22 @@ const testimonials = [
 export default function TransparencyPage() {
   return (
     <div className="container py-10">
-      <Link href="/" className="flex items-center gap-2 text-sm mb-6 hover:underline">
+      <Link
+        href="/"
+        className="flex items-center gap-2 text-sm mb-6 hover:underline"
+      >
         <ArrowLeft className="h-4 w-4" />
         Back to home
       </Link>
 
       <div className="flex flex-col gap-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Transparency Dashboard</h1>
-          <p className="text-muted-foreground mt-1">Track donations and see the impact of community support</p>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Transparency Dashboard
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Track donations and see the impact of community support
+          </p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-3">
@@ -120,7 +133,9 @@ export default function TransparencyPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Recent Donations</CardTitle>
-                <CardDescription>All verified donations are publicly recorded for transparency</CardDescription>
+                <CardDescription>
+                  All verified donations are publicly recorded for transparency
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="rounded-md border">
@@ -133,8 +148,13 @@ export default function TransparencyPage() {
                   </div>
                   <div className="divide-y">
                     {recentDonations.map((donation) => (
-                      <div key={donation.id} className="grid grid-cols-5 p-3 text-sm">
-                        <div className="text-muted-foreground">{new Date(donation.date).toLocaleDateString()}</div>
+                      <div
+                        key={donation.id}
+                        className="grid grid-cols-5 p-3 text-sm"
+                      >
+                        <div className="text-muted-foreground">
+                          {new Date(donation.date).toLocaleDateString()}
+                        </div>
                         <div>{donation.donor}</div>
                         <div>{donation.recipient}</div>
                         <div>${donation.amount}</div>
@@ -148,7 +168,10 @@ export default function TransparencyPage() {
                               <span>Verified</span>
                             </Badge>
                           ) : (
-                            <Badge variant="outline" className="flex items-center gap-1">
+                            <Badge
+                              variant="outline"
+                              className="flex items-center gap-1"
+                            >
                               <Clock className="h-3 w-3" />
                               <span>Pending</span>
                             </Badge>
@@ -176,11 +199,17 @@ export default function TransparencyPage() {
                   <CardHeader className="pb-2">
                     <div className="flex items-center gap-2">
                       <Avatar>
-                        <AvatarFallback>{testimonial.family.charAt(0)}</AvatarFallback>
+                        <AvatarFallback>
+                          {testimonial.family.charAt(0)}
+                        </AvatarFallback>
                       </Avatar>
                       <div>
-                        <CardTitle className="text-lg">{testimonial.family}</CardTitle>
-                        <CardDescription>{new Date(testimonial.date).toLocaleDateString()}</CardDescription>
+                        <CardTitle className="text-lg">
+                          {testimonial.family}
+                        </CardTitle>
+                        <CardDescription>
+                          {new Date(testimonial.date).toLocaleDateString()}
+                        </CardDescription>
                       </div>
                     </div>
                   </CardHeader>
@@ -205,37 +234,42 @@ export default function TransparencyPage() {
         <Card className="mt-6">
           <CardHeader>
             <CardTitle>Our Commitment to Transparency</CardTitle>
-            <CardDescription>How we ensure your donations reach those who need them most</CardDescription>
+            <CardDescription>
+              How we ensure your donations reach those who need them most
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-6 md:grid-cols-3">
               <div className="space-y-2">
                 <h3 className="font-medium">Verification Process</h3>
                 <p className="text-sm text-muted-foreground">
-                  Every family registration undergoes a thorough verification process to confirm their identity and
-                  needs. Our team validates documentation and conducts follow-up checks.
+                  Every family registration undergoes a thorough verification
+                  process to confirm their identity and needs. Our team
+                  validates documentation and conducts follow-up checks.
                 </p>
               </div>
               <div className="space-y-2">
                 <h3 className="font-medium">Donation Tracking</h3>
                 <p className="text-sm text-muted-foreground">
-                  All donations are recorded in our public ledger. Donors provide proof of transaction, and recipients
-                  confirm receipt of funds to complete the verification cycle.
+                  All donations are recorded in our public ledger. Donors
+                  provide proof of transaction, and recipients confirm receipt
+                  of funds to complete the verification cycle.
                 </p>
               </div>
               <div className="space-y-2">
                 <h3 className="font-medium">Direct Support Model</h3>
                 <p className="text-sm text-muted-foreground">
-                  100% of your donation goes directly to the family you choose to support. We do not take any fees or
-                  percentage of donations. Our platform is maintained by volunteers.
+                  100% of your donation goes directly to the family you choose
+                  to support. We do not take any fees or percentage of
+                  donations. Our platform is maintained by volunteers.
                 </p>
               </div>
             </div>
 
             <div className="pt-4">
               <p className="text-sm text-muted-foreground">
-                For more information about our transparency practices or to volunteer as a verification team member,
-                please{" "}
+                For more information about our transparency practices or to
+                volunteer as a verification team member, please{" "}
                 <Link href="/contact" className="text-primary hover:underline">
                   contact us
                 </Link>
@@ -248,4 +282,3 @@ export default function TransparencyPage() {
     </div>
   )
 }
-

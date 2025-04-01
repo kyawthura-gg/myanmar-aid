@@ -1,12 +1,12 @@
-import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
-import { PrismaClient } from "@prisma/client";
-import { PrismaD1 } from "@prisma/adapter-d1";
+import { PrismaD1 } from "@prisma/adapter-d1"
+import { PrismaClient } from "@prisma/client"
+import { betterAuth } from "better-auth"
+import { prismaAdapter } from "better-auth/adapters/prisma"
 
 const getDB = (db: D1Database) => {
-  const adapter = new PrismaD1(db);
-  return new PrismaClient({ adapter });
-};
+  const adapter = new PrismaD1(db)
+  return new PrismaClient({ adapter })
+}
 
 export const getAuth = (db: D1Database) => {
   return betterAuth({
@@ -17,5 +17,5 @@ export const getAuth = (db: D1Database) => {
     emailAndPassword: {
       enabled: true,
     },
-  });
-};
+  })
+}

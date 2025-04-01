@@ -1,90 +1,90 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-	"vcs": {
-		"enabled": false,
-		"clientKind": "git",
-		"useIgnoreFile": false
-	},
-	"files": {
-		"ignoreUnknown": false,
-		"ignore": [
-			"node_modules",
-			".next",
-			".wrangler",
-			"generated",
-			"worker-configuration.d.ts",
-			"prisma/*"
-		]
-	},
-	"formatter": {
-		"enabled": true,
-		"indentStyle": "tab"
-	},
-	"organizeImports": {
-		"enabled": true
-	},
-	"linter": {
-		"rules": {
-			"nursery": {
-				"noExportedImports": "off",
-				"noSecrets": "off",
-				"noCommonJs": "off",
-				"noImgElement": "off",
-				"useSortedClasses": "off",
-				"useConsistentCurlyBraces": "off",
-				"noStaticElementInteractions": "off",
-				"noNestedTernary": "off",
-				"useStrictMode": "off"
-			},
-			"suspicious": {
-				"noConsole": "off",
-				"noArrayIndexKey": "off",
-				"noExplicitAny": "off",
-				"noAssignInExpressions": "off",
-				"noEvolvingTypes": "off",
-				"noImplicitAnyLet": "off",
-				"noConfusingVoidType": "off",
-				"useAwait": "off"
-			},
-			"correctness": {
-				"noUndeclaredVariables": "off",
-				"noInvalidPositionAtImportRule": "off",
-				"noNodejsModules": "off",
-				"useExhaustiveDependencies": "warn",
-				"noUnsafeOptionalChaining": "off"
-			},
-			"style": {
-				"useNamingConvention": "off",
-				"useSelfClosingElements": "warn",
-				"noNonNullAssertion": "off",
-				"useNodejsImportProtocol": "off",
-				"useTemplate": "off",
-				"noUselessElse": "off",
-				"noNegationElse": "off"
-			},
-			"a11y": {
-				"useButtonType": "off",
-				"useKeyWithClickEvents": "off",
-				"noSvgWithoutTitle": "off",
-				"useSemanticElements": "off",
-				"useFocusableInteractive": "off"
-			},
-			"complexity": {
-				"noExcessiveCognitiveComplexity": "off",
-				"noForEach": "off",
-				"noUselessFragments": "off"
-			},
-			"security": {
-				"noDangerouslySetInnerHtml": "off"
-			}
-		}
-	},
-	"javascript": {
-		"formatter": {
-			"lineEnding": "lf",
-			"semicolons": "asNeeded",
-			"quoteStyle": "double",
-			"trailingCommas": "es5"
-		}
-	}
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "vcs": {
+    "enabled": false,
+    "clientKind": "git",
+    "useIgnoreFile": false
+  },
+  "files": {
+    "ignoreUnknown": false,
+    "ignore": [
+      "node_modules",
+      ".next",
+      ".wrangler",
+      "generated",
+      "worker-configuration.d.ts",
+      "prisma/*"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space"
+  },
+  "organizeImports": {
+    "enabled": true
+  },
+  "linter": {
+    "rules": {
+      "nursery": {
+        "noExportedImports": "off",
+        "noSecrets": "off",
+        "noCommonJs": "off",
+        "noImgElement": "off",
+        "useSortedClasses": "off",
+        "useConsistentCurlyBraces": "off",
+        "noStaticElementInteractions": "off",
+        "noNestedTernary": "off",
+        "useStrictMode": "off"
+      },
+      "suspicious": {
+        "noConsole": "off",
+        "noArrayIndexKey": "off",
+        "noExplicitAny": "off",
+        "noAssignInExpressions": "off",
+        "noEvolvingTypes": "off",
+        "noImplicitAnyLet": "off",
+        "noConfusingVoidType": "off",
+        "useAwait": "off"
+      },
+      "correctness": {
+        "noUndeclaredVariables": "off",
+        "noInvalidPositionAtImportRule": "off",
+        "noNodejsModules": "off",
+        "useExhaustiveDependencies": "warn",
+        "noUnsafeOptionalChaining": "off"
+      },
+      "style": {
+        "useNamingConvention": "off",
+        "useSelfClosingElements": "warn",
+        "noNonNullAssertion": "off",
+        "useNodejsImportProtocol": "off",
+        "useTemplate": "off",
+        "noUselessElse": "off",
+        "noNegationElse": "off"
+      },
+      "a11y": {
+        "useButtonType": "off",
+        "useKeyWithClickEvents": "off",
+        "noSvgWithoutTitle": "off",
+        "useSemanticElements": "off",
+        "useFocusableInteractive": "off"
+      },
+      "complexity": {
+        "noExcessiveCognitiveComplexity": "off",
+        "noForEach": "off",
+        "noUselessFragments": "off"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "lineEnding": "lf",
+      "semicolons": "asNeeded",
+      "quoteStyle": "double",
+      "trailingCommas": "es5"
+    }
+  }
 }

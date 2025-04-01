@@ -1,39 +1,42 @@
-import type React from "react";
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { NextIntlClientProvider } from "next-intl";
-import { inter, notoSansMyanmar } from "@/lib/fonts";
-import "@/app/globals.css";
+import { inter, notoSansMyanmar } from "@/lib/fonts"
+import type { Metadata } from "next"
+import { NextIntlClientProvider } from "next-intl"
+import { notFound } from "next/navigation"
+import type React from "react"
+import "@/app/globals.css"
+import { api } from "@/trpc/server"
 
 export const metadata: Metadata = {
   title: "Myanmar Aid Connect",
   description:
     "Direct peer-to-peer aid platform for Myanmar earthquake victims",
-};
+}
 
-const locales = ["en", "mm"];
+const locales = ["en", "mm"]
 
 export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
+  return locales.map((locale) => ({ locale }))
 }
 
 export default async function RootLayout({
   children,
   params,
 }: {
-  children: React.ReactNode;
-  params: { locale: string };
+  children: React.ReactNode
+  params: { locale: string }
 }) {
-  const locale = (await params).locale;
+  const hello = await api.post.getLatest()
+  console.log({ hello })
+  const locale = (await params).locale
   if (!locales.includes(locale)) {
-    notFound();
+    notFound()
   }
 
-  let messages;
+  let messages
   try {
-    messages = (await import(`@/lib/i18n/locales/${locale}.json`)).default;
+    messages = (await import(`@/lib/i18n/locales/${locale}.json`)).default
   } catch (error) {
-    notFound();
+    notFound()
   }
 
   return (
@@ -46,5 +49,5 @@ export default async function RootLayout({
         </NextIntlClientProvider>
       </body>
     </html>
-  );
+  )
 }

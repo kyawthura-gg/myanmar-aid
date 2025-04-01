@@ -1,20 +1,20 @@
-import { getRequestConfig } from "next-intl/server";
-import enMessages from "./locales/en.json";
-import mmMessages from "./locales/mm.json";
+import { getRequestConfig } from "next-intl/server"
+import enMessages from "./locales/en.json"
+import mmMessages from "./locales/mm.json"
 
 export default getRequestConfig(async (req) => {
   // Load messages for the requested locale
-  let messages = {};
-  const locale = req?.locale ?? "en";
+  let messages = {}
+  const locale = req?.locale ?? "en"
 
   if (locale === "en") {
-    messages = enMessages;
+    messages = enMessages
   } else {
-    messages = mmMessages;
+    messages = mmMessages
   }
 
   return {
     locale,
     messages,
-  };
-});
+  }
+})

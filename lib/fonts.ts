@@ -12,4 +12,3 @@ export const notoSansMyanmar = Noto_Sans_Myanmar({
   display: "swap",
   variable: "--font-noto-sans-myanmar",
 })
-
