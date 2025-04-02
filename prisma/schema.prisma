@@ -18,23 +18,25 @@ model Post {
 
 // --- start of better-auth tables ---
 model User {
-  id                String                 @id
-  name              String
-  email             String
-  emailVerified     Boolean
-  image             String?
-
-  phone             String?   // Optional for campaign creators
-  facebookLink      String?   // For user, verification
-  verificationPhoto String? // For user, verification
-  isAdmin           Boolean   @default(false)
-
-  createdAt         DateTime
-  updatedAt         DateTime
-  sessions          Session[]
-  accounts          Account[]
-  campaigns         Campaign[]
-  verifiedDonations Donation[]
+  id                  String     @id
+  name                String?
+  email               String
+  emailVerified       Boolean
+  image               String?
+  phone               String? // Optional for campaign creators
+  facebookLink        String? // For user, verification, TODO change to socialLink
+  viberPhoneNumber    String?
+  whatsappPhoneNumber String?
+  verificationPhoto   String? // For user, verification
+  isAdmin             Boolean    @default(false)
+  accountType         String     @default("individual") // Only "individual" or "org"
+  status              String     @default("pending") // "pending", "active", "rejected"
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @default(now())
+  sessions            Session[]
+  accounts            Account[]
+  campaigns           Campaign[]
+  verifiedDonations   Donation[]
 
   @@unique([email])
   @@map("user")
@@ -84,54 +86,52 @@ model Verification {
 
   @@map("verification")
 }
+
 // --- end of better-auth tables ---
 
 model Campaign {
-  id          Int        @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   title       String
   description String
-  photos      String   // stringify array of image URLs
-  category    String     @default("INDIVIDUAL") // Only "INDIVIDUAL" or "ORG"
-  status      String     // "Pending", "Active", "Rejected", "Inactive"
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @default(now())
-  
+  photos      String // stringify array of image URLs
+  status      String // "pending", "active", "rejected"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+
   // Contact Info (Telegram added later via UI)
   facebookLink String?
   viberLink    String?
 
   // Relations
-  userId      String
-  user        User          @relation(fields: [userId], references: [id])
-  payments    CampaignBanking[]
-  donations   Donation[]
+  userId    String
+  user      User              @relation(fields: [userId], references: [id])
+  payments  CampaignBanking[]
+  donations Donation[]
 }
 
 model CampaignBanking {
-  id             Int       @id @default(autoincrement())
-  methodType     String    // "Bank", "Crypto", "MobileMoney", "Link"
-  country        String    @default("MM") // ISO 3166-1 alpha-2 code
-  accountName    String?
-  accountNumber  String?
-  cryptoAddress  String?
-  mobileNumber   String?
-  isVerified     Boolean   @default(false)
-  createdAt      DateTime  @default(now())
-  
+  id            Int       @id @default(autoincrement())
+  methodType    String // "bank", "crypto", "mobilepayment", "link"
+  country       String    @default("MM") // ISO 3166-1 alpha-2 code
+  accountName   String?
+  accountNumber String?
+  cryptoAddress String?
+  mobileNumber  String?
+  isVerified    Boolean   @default(false)
+  createdAt     DateTime  @default(now())
   // Dual-linking: To both Campaign AND User
-  campaignId     Int?
-  campaign       Campaign? @relation(fields: [campaignId], references: [id])
-
+  campaignId    Int?
+  campaign      Campaign? @relation(fields: [campaignId], references: [id])
   // For bank-specific fields
-  iban           String?
-  swiftCode      String?
-  routingNumber  String?
+  iban          String?
+  swiftCode     String?
+  routingNumber String?
 
   // For mobile money
   mobileProvider String?
 
   // For link
-  link           String?
+  link String?
 
   @@index([country])
   @@index([methodType])
@@ -142,19 +142,16 @@ model Donation {
   amount         Float
   screenshotPath String
   isAnonymous    Boolean   @default(false)
-  status         String    @default("Pending") // "Pending", "Verified", "Rejected"
+  status         String    @default("pending") // "pending", "verified", "rejected"
   donatedAt      DateTime  @default(now())
-  
   // Verification fields (previously in DonationVerification)
   verifiedAt     DateTime? // Added when status changes to Verified/Rejected
-  adminNote      String?   // Reason for rejection/notes
-  adminId        String?   // Admin who verified
+  adminNote      String? // Reason for rejection/notes
+  adminId        String? // Admin who verified
   admin          User?     @relation(fields: [adminId], references: [id])
-
   // Optional donor info
   donorName      String?
   donorEmail     String?
-
   // Relations
   campaign       Campaign  @relation(fields: [campaignId], references: [id])
   campaignId     Int
