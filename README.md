@@ -31,10 +31,10 @@
 
 ## Tech Stack
 
-- [Next.js](https://nextjs.org/) - React framework for production
-- [Prisma](https://www.prisma.io/) - Next-generation ORM
+- [Next.js](https://nextjs.org/) - Framework
+- [Prisma](https://www.prisma.io/) - ORM
 - [Cloudflare D1](https://developers.cloudflare.com/d1/) - SQLite database at the edge
-- [Better Auth](https://www.better-auth.com/) - Authentication solution
+- [Better Auth](https://www.better-auth.com/) - Authentication
 - [tRPC](https://trpc.io/) - End-to-end typesafe APIs
 - [shadcn/ui](https://ui.shadcn.com/) - Re-usable UI components
 
