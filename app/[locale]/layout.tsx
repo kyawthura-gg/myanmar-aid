@@ -25,7 +25,7 @@ export default async function RootLayout({
   children: React.ReactNode
   params: { locale: string }
 }) {
-  const hello = await api.post.getLatest()
+  const hello = await api.post.hello({ text: "World" })
   console.log({ hello })
   const locale = (await params).locale
   if (!locales.includes(locale)) {

@@ -4,7 +4,6 @@
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
-  output          = "../generated/prisma"
 }
 
 datasource db {
@@ -17,18 +16,25 @@ model Post {
   name String
 }
 
+// --- start of better-auth tables ---
 model User {
   id                String                 @id
   name              String
   email             String
   emailVerified     Boolean
   image             String?
+
+  phone             String?   // Optional for campaign creators
+  facebookLink      String?   // For user, verification
+  verificationPhoto String? // For user, verification
+  isAdmin           Boolean   @default(false)
+
   createdAt         DateTime
   updatedAt         DateTime
   sessions          Session[]
   accounts          Account[]
   campaigns         Campaign[]
-  verifiedDonations DonationVerification[]
+  verifiedDonations Donation[]
 
   @@unique([email])
   @@map("user")
@@ -78,66 +84,81 @@ model Verification {
 
   @@map("verification")
 }
+// --- end of better-auth tables ---
 
 model Campaign {
-  id             Int               @id @default(autoincrement())
-  title          String
-  description    String
-  goalAmount     Float
-  currency       String            @default("USD")
-  category       String
-  status         String            @default("Active")
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @default(now())
-  userId         String
-  user           User              @relation(fields: [userId], references: [id])
-  paymentMethods CampaignBanking[]
-  donations      Donation[]
+  id          Int        @id @default(autoincrement())
+  title       String
+  description String
+  photos      String   // stringify array of image URLs
+  category    String     @default("INDIVIDUAL") // Only "INDIVIDUAL" or "ORG"
+  status      String     // "Pending", "Active", "Rejected", "Inactive"
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now())
+  
+  // Contact Info (Telegram added later via UI)
+  facebookLink String?
+  viberLink    String?
+
+  // Relations
+  userId      String
+  user        User          @relation(fields: [userId], references: [id])
+  payments    CampaignBanking[]
+  donations   Donation[]
 }
 
 model CampaignBanking {
-  id             Int        @id @default(autoincrement())
-  methodType     String // "Bank", "Crypto", "MobileMoney"
-  bankName       String?
+  id             Int       @id @default(autoincrement())
+  methodType     String    // "Bank", "Crypto", "MobileMoney", "Link"
+  country        String    @default("MM") // ISO 3166-1 alpha-2 code
   accountName    String?
   accountNumber  String?
-  iban           String?
-  cryptoCurrency String?
   cryptoAddress  String?
-  mobileProvider String?
   mobileNumber   String?
-  isVerified     Boolean    @default(false)
-  createdAt      DateTime   @default(now())
-  campaignId     Int
-  campaign       Campaign   @relation(fields: [campaignId], references: [id])
-  Donation       Donation[]
+  isVerified     Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  
+  // Dual-linking: To both Campaign AND User
+  campaignId     Int?
+  campaign       Campaign? @relation(fields: [campaignId], references: [id])
+
+  // For bank-specific fields
+  iban           String?
+  swiftCode      String?
+  routingNumber  String?
+
+  // For mobile money
+  mobileProvider String?
+
+  // For link
+  link           String?
+
+  @@index([country])
+  @@index([methodType])
 }
 
 model Donation {
-  id              Int                   @id @default(autoincrement())
-  donorName       String
-  donorEmail      String?
-  amount          Float
-  currency        String
-  screenshotPath  String
-  status          String                @default("Pending") // "Pending", "Verified", "Rejected"
-  donatedAt       DateTime              @default(now())
-  verifiedAt      DateTime?
-  campaignId      Int
-  paymentMethodId Int?
-  campaign        Campaign              @relation(fields: [campaignId], references: [id])
-  paymentMethod   CampaignBanking?      @relation(fields: [paymentMethodId], references: [id])
-  verification    DonationVerification?
-}
+  id             Int       @id @default(autoincrement())
+  amount         Float
+  screenshotPath String
+  isAnonymous    Boolean   @default(false)
+  status         String    @default("Pending") // "Pending", "Verified", "Rejected"
+  donatedAt      DateTime  @default(now())
+  
+  // Verification fields (previously in DonationVerification)
+  verifiedAt     DateTime? // Added when status changes to Verified/Rejected
+  adminNote      String?   // Reason for rejection/notes
+  adminId        String?   // Admin who verified
+  admin          User?     @relation(fields: [adminId], references: [id])
 
-model DonationVerification {
-  id         Int      @id @default(autoincrement())
-  status     String // "Approved", "Rejected"
-  notes      String?
-  verifiedAt DateTime @default(now())
-  donationId Int      @unique
-  donation   Donation @relation(fields: [donationId], references: [id])
-  adminId    String
-  admin      User     @relation(fields: [adminId], references: [id])
-}
+  // Optional donor info
+  donorName      String?
+  donorEmail     String?
 
+  // Relations
+  campaign       Campaign  @relation(fields: [campaignId], references: [id])
+  campaignId     Int
+
+  @@index([status])
+  @@index([campaignId])
+}
