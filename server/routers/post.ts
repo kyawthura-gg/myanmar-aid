@@ -1,10 +1,6 @@
 import { z } from "zod"
 
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "@/server/trpc"
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc"
 
 export const postRouter = createTRPCRouter({
   hello: publicProcedure

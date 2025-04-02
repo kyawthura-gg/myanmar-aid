@@ -15,7 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-export default async function Home() {
+export default function Home() {
   const t = useTranslations("home")
   const common = useTranslations("common")
 
@@ -38,7 +38,7 @@ export default async function Home() {
                     <Link href="/donate">{t("donateButton")}</Link>
                   </Button>
                   <Button asChild variant="outline" size="lg">
-                    <Link href="/register-family">{t("registerButton")}</Link>
+                    <Link href="/register-aid">{t("registerButton")}</Link>
                   </Button>
                 </div>
               </div>
@@ -82,10 +82,10 @@ export default async function Home() {
                 <CardFooter>
                   <Button asChild variant="ghost" size="sm">
                     <Link
-                      href="/register-family"
+                      href="/register-aid"
                       className="flex items-center gap-1"
                     >
-                      {t("learnMore")} <ArrowRight className="h-4 w-4" />
+                      {common("learnMore")} <ArrowRight className="h-4 w-4" />
                     </Link>
                   </Button>
                 </CardFooter>
@@ -191,24 +191,24 @@ export default async function Home() {
               </div>
               <div className="space-y-4">
                 <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">
-                  Impact Statistics
+                  Real-Time Impact
                 </h2>
                 <div className="grid gap-8 md:grid-cols-2">
                   <div className="space-y-2">
                     <h3 className="text-4xl font-bold">247</h3>
-                    <p className="text-muted-foreground">Families Registered</p>
+                    <p className="text-muted-foreground">Recipients Verified</p>
                   </div>
                   <div className="space-y-2">
                     <h3 className="text-4xl font-bold">$32,450</h3>
-                    <p className="text-muted-foreground">Directly Donated</p>
+                    <p className="text-muted-foreground">Aid Delivered</p>
                   </div>
                   <div className="space-y-2">
                     <h3 className="text-4xl font-bold">189</h3>
-                    <p className="text-muted-foreground">Families Helped</p>
+                    <p className="text-muted-foreground">Recipients Helped</p>
                   </div>
                   <div className="space-y-2">
                     <h3 className="text-4xl font-bold">100%</h3>
-                    <p className="text-muted-foreground">Funds to Recipients</p>
+                    <p className="text-muted-foreground">Direct to Recipients</p>
                   </div>
                 </div>
               </div>

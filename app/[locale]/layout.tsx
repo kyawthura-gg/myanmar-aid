@@ -4,6 +4,8 @@ import { NextIntlClientProvider } from "next-intl"
 import { notFound } from "next/navigation"
 import type React from "react"
 import "@/app/globals.css"
+import { Toaster } from "@/components/ui/sonner"
+import { TRPCReactProvider } from "@/trpc/react"
 import { api } from "@/trpc/server"
 
 export const metadata: Metadata = {
@@ -44,9 +46,12 @@ export default async function RootLayout({
       <body
         className={`${inter.variable} ${notoSansMyanmar.variable} font-sans`}
       >
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
-        </NextIntlClientProvider>
+        <TRPCReactProvider>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            {children}
+          </NextIntlClientProvider>
+        </TRPCReactProvider>
+        <Toaster />
       </body>
     </html>
   )
