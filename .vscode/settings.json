@@ -25,5 +25,8 @@
   },
   "tailwindCSS.experimental.configFile": "./tailwind.config.js",
   "eslint.enable": false,
-  "prettier.enable": false
+  "prettier.enable": false,
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  }
 }
