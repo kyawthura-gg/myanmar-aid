@@ -6,7 +6,6 @@ import type React from "react"
 import "@/app/globals.css"
 import { Toaster } from "@/components/ui/sonner"
 import { TRPCReactProvider } from "@/trpc/react"
-import { api } from "@/trpc/server"
 
 export const metadata: Metadata = {
   title: "Myanmar Aid Connect",
@@ -27,8 +26,6 @@ export default async function RootLayout({
   children: React.ReactNode
   params: { locale: string }
 }) {
-  const hello = await api.post.hello({ text: "World" })
-  console.log({ hello })
   const locale = (await params).locale
   if (!locales.includes(locale)) {
     notFound()

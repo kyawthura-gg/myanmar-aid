@@ -7,7 +7,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -25,168 +24,49 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import {
   ArrowLeft,
-  Building,
-  Calendar,
-  CreditCard,
-  Heart,
   MapPin,
   MessageSquare,
-  Phone,
   Share2,
   Upload,
-  User,
-  Users,
   X,
 } from "lucide-react"
 import Link from "next/link"
-import { useParams, useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useParams } from "next/navigation"
+import { useState } from "react"
 
-// Mock data for recipients
-const recipients = [
-  {
-    id: "1",
-    name: "Aung Family",
-    type: "family",
-    location: "Yangon",
-    members: 5,
-    needs: ["Shelter", "Food"],
-    story:
-      "Lost home in earthquake, currently staying in temporary shelter. The family includes two young children and elderly grandparents. Their house was completely destroyed in the earthquake, and they are currently living under a makeshift shelter made from tarpaulin. They urgently need materials to build a more stable temporary shelter before the rainy season begins. They also need food supplies as the father has lost his job at the local market which was destroyed in the earthquake.",
-    amountNeeded: 500,
-    amountRaised: 320,
-    updates: [
-      {
-        date: "2025-03-25",
-        content:
-          "Thank you to everyone who has donated so far. We were able to purchase some tarpaulin and basic food supplies.",
-      },
-      {
-        date: "2025-03-28",
-        content:
-          "We received more donations and have now bought wood to strengthen our temporary shelter. We are very grateful for your support.",
-      },
-    ],
-    images: [
-      "/placeholder.svg?height=300&width=400",
-      "/placeholder.svg?height=300&width=400",
-    ],
-  },
-  {
-    id: "5",
-    name: "Ma Hla",
-    type: "individual",
-    location: "Yangon",
-    members: 1,
-    needs: ["Medical", "Food"],
-    story:
-      "I am an elderly woman with chronic medical conditions who lost my home in the earthquake. I was living alone in a small house that was severely damaged during the earthquake. The walls have large cracks and it's not safe to stay inside. I need assistance with medical supplies for my diabetes and high blood pressure, as well as basic food and shelter. I lost most of my belongings in the earthquake and have been staying with neighbors temporarily, but need to find a more permanent solution soon.",
-    amountNeeded: 300,
-    amountRaised: 120,
-    updates: [
-      {
-        date: "2025-03-26",
-        content:
-          "I am grateful for the initial donations that have helped me purchase my essential medications.",
-      },
-    ],
-    images: ["/placeholder.svg?height=300&width=400"],
-  },
-  {
-    id: "7",
-    name: "Yangon Relief Center",
-    type: "organization",
-    location: "Yangon",
-    members: 0,
-    needs: ["Food", "Medical", "Shelter"],
-    story:
-      "We are a local organization providing immediate relief to over 50 families in the Yangon area affected by the earthquake. Our team of volunteers is working around the clock to distribute emergency supplies, provide basic medical care, and help construct temporary shelters. We have established a community kitchen that serves hot meals twice daily to affected families. We also have a medical team providing first aid and basic healthcare. Your donations will help us purchase more food supplies, medical equipment, and building materials for temporary shelters. We ensure transparent use of all funds and provide regular updates on our activities.",
-    amountNeeded: 2000,
-    amountRaised: 800,
-    updates: [
-      {
-        date: "2025-03-24",
-        content:
-          "Today we distributed food packages to 25 families in the eastern district of Yangon.",
-      },
-      {
-        date: "2025-03-26",
-        content:
-          "Our medical team treated 15 people with minor injuries and distributed essential medications.",
-      },
-      {
-        date: "2025-03-29",
-        content:
-          "With recent donations, we purchased materials to build 10 temporary shelters. Construction begins tomorrow.",
-      },
-    ],
-    images: [
-      "/placeholder.svg?height=300&width=400",
-      "/placeholder.svg?height=300&width=400",
-      "/placeholder.svg?height=300&width=400",
-    ],
-  },
-]
-
-// Payment method types
-interface PaymentMethod {
-  id: number
-  methodType: string
-  bankName?: string
-  accountName?: string
-  accountNumber?: string
-  iban?: string
-  cryptoCurrency?: string
-  cryptoAddress?: string
-  mobileProvider?: string
-  mobileNumber?: string
-}
+import { api } from "@/trpc/react"
+import Loading from "./loading"
 
 export default function CampaignDonationPage() {
-  const router = useRouter()
   const params = useParams()
-  const [isDonateModalOpen, setIsDonateModalOpen] = useState(false)
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([])
-  const [selectedPaymentMethod, setSelectedPaymentMethod] =
-    useState<PaymentMethod | null>(null)
-  const [donationAmount, setDonationAmount] = useState("")
-  const [donorName, setDonorName] = useState("")
-  const [donorEmail, setDonorEmail] = useState("")
-  const [proofFile, setProofFile] = useState<File | null>(null)
   const [isProofModalOpen, setIsProofModalOpen] = useState(false)
-  const [activePaymentTab, setActivePaymentTab] = useState("bank")
   const [proofUploaded, setProofUploaded] = useState(false)
 
-  const recipient = recipients.find((r) => r.id === params.id)
+  const { data: campaign, isLoading } = api.campaign.getActiveById.useQuery(
+    params.id as string,
+    {
+      enabled: !!params.id,
+    }
+  )
 
-  if (!recipient) {
+  const handleProofSubmission = () => {}
+
+  if (isLoading) {
+    return <Loading />
+  }
+
+  if (!campaign) {
     return (
       <div className="container py-20 text-center">
-        <h1 className="text-2xl font-bold mb-4">Recipient Not Found</h1>
+        <h1 className="text-2xl font-bold mb-4">Campaign Not Found</h1>
         <p className="text-muted-foreground mb-6">
-          The recipient you're looking for doesn't exist or has been removed.
+          The campaign you're looking for doesn't exist or has been removed.
         </p>
         <Button asChild>
-          <Link href="/donate">Back to Donations</Link>
+          <Link href="/donate">Back to Campaigns</Link>
         </Button>
       </div>
     )
-  }
-
-  const handleDonate = () => {
-    setIsDonateModalOpen(true)
-  }
-
-  const handleSubmitProof = () => {
-    setIsDonateModalOpen(false)
-    setIsProofModalOpen(true)
-  }
-
-  const handleProofSubmission = () => {
-    // In a real app, this would submit the proof to the server
-    setIsProofModalOpen(false)
-    // Show success message or redirect
-    router.push("/donation-success")
   }
 
   return (
@@ -196,7 +76,7 @@ export default function CampaignDonationPage() {
         className="flex items-center gap-2 text-sm mb-6 hover:underline"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to all recipients
+        Back to all campaigns
       </Link>
 
       <div className="grid gap-8 md:grid-cols-3">
@@ -204,35 +84,18 @@ export default function CampaignDonationPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <Avatar className="h-16 w-16">
-                <AvatarFallback className="text-xl">
-                  {recipient.type === "family" && <Users className="h-6 w-6" />}
-                  {recipient.type === "individual" && (
-                    <User className="h-6 w-6" />
-                  )}
-                  {recipient.type === "organization" && (
-                    <Building className="h-6 w-6" />
-                  )}
+                <AvatarFallback>
+                  {campaign.user?.name?.[0] || "U"}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h1 className="text-2xl font-bold">{recipient.name}</h1>
+                <h1 className="text-2xl font-bold">{campaign.title}</h1>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-1">
                   <div className="flex items-center text-muted-foreground text-sm">
                     <MapPin className="h-3 w-3 mr-1" />
-                    {recipient.location}
+                    Myanmar
                   </div>
-                  {recipient.type !== "organization" && (
-                    <div className="flex items-center text-muted-foreground text-sm">
-                      <Users className="h-3 w-3 mr-1" />
-                      {recipient.members}{" "}
-                      {recipient.type === "family"
-                        ? "family members"
-                        : "person"}
-                    </div>
-                  )}
-                  <Badge variant="outline" className="capitalize">
-                    {recipient.type}
-                  </Badge>
+                  <Badge variant="outline">{campaign.status}</Badge>
                 </div>
               </div>
             </div>
@@ -249,32 +112,56 @@ export default function CampaignDonationPage() {
           </div>
 
           <Tabs defaultValue="about" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="about">About</TabsTrigger>
-              <TabsTrigger value="updates">Updates</TabsTrigger>
               <TabsTrigger value="photos">Photos</TabsTrigger>
             </TabsList>
 
             <TabsContent value="about" className="mt-6 space-y-6">
               <div>
-                <h2 className="text-xl font-semibold mb-2">Their Story</h2>
+                <h2 className="text-xl font-semibold mb-2">Campaign Story</h2>
                 <p className="text-muted-foreground whitespace-pre-line">
-                  {recipient.story}
+                  {campaign.description}
                 </p>
               </div>
 
               <div>
-                <h2 className="text-xl font-semibold mb-2">Needs</h2>
-                <div className="flex flex-wrap gap-2">
-                  {recipient.needs.map((need, i) => (
-                    <Badge
-                      key={i}
-                      variant="secondary"
-                      className="px-3 py-1 text-sm"
+                <h2 className="text-xl font-semibold mb-2">
+                  Contact Information
+                </h2>
+                <div className="space-y-2">
+                  {campaign.user.facebookLink && (
+                    <a
+                      href={campaign.user.facebookLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-blue-600 hover:underline"
                     >
-                      {need}
-                    </Badge>
-                  ))}
+                      <svg className="h-4 w-4" viewBox="0 0 24 24">
+                        <path
+                          fill="currentColor"
+                          d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+                        />
+                      </svg>
+                      Facebook
+                    </a>
+                  )}
+                  {campaign.user.viberPhoneNumber && (
+                    <a
+                      href={campaign.user.viberPhoneNumber}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-purple-600 hover:underline"
+                    >
+                      <svg className="h-4 w-4" viewBox="0 0 24 24">
+                        <path
+                          fill="currentColor"
+                          d="M11.4.883C5.797.883 1.242 5.437 1.242 11.04v.002c0 1.345.263 2.624.74 3.795a.27.27 0 0 1 .03.126v3.577c0 .147.12.268.268.268h3.577a.27.27 0 0 0 .126-.03c1.171-.477 2.45-.74 3.795-.74h.002c5.603 0 10.157-4.554 10.157-10.157S17.003.883 11.4.883z"
+                        />
+                      </svg>
+                      Viber
+                    </a>
+                  )}
                 </div>
               </div>
 
@@ -290,60 +177,29 @@ export default function CampaignDonationPage() {
                     Verified
                   </Badge>
                   <span className="text-sm">
-                    Verified by Myanmar Aid Connect on March 25, 2025
+                    Verified by Myanmar Aid Connect
                   </span>
                 </div>
               </div>
             </TabsContent>
 
-            <TabsContent value="updates" className="mt-6">
-              {recipient.updates && recipient.updates.length > 0 ? (
-                <div className="space-y-4">
-                  {recipient.updates.map((update, index) => (
-                    <Card key={index}>
-                      <CardHeader className="pb-2">
-                        <div className="flex items-center justify-between">
-                          <CardTitle className="text-base">
-                            Update from {recipient.name}
-                          </CardTitle>
-                          <div className="flex items-center text-sm text-muted-foreground">
-                            <Calendar className="h-3 w-3 mr-1" />
-                            {update.date}
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-muted-foreground">
-                          {update.content}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">
-                    No updates have been posted yet.
-                  </p>
-                </div>
-              )}
-            </TabsContent>
-
             <TabsContent value="photos" className="mt-6">
-              {recipient.images && recipient.images.length > 0 ? (
+              {campaign.photos ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {recipient.images.map((image, index) => (
-                    <div
-                      key={index}
-                      className="rounded-lg overflow-hidden border"
-                    >
-                      <img
-                        src={image || "/placeholder.svg"}
-                        alt={""}
-                        className="w-full h-auto object-cover aspect-video"
-                      />
-                    </div>
-                  ))}
+                  {JSON.parse(campaign.photos).map(
+                    (photo: string, index: number) => (
+                      <div
+                        key={index}
+                        className="rounded-lg overflow-hidden border"
+                      >
+                        <img
+                          src={photo}
+                          alt=""
+                          className="w-full h-auto object-cover aspect-video"
+                        />
+                      </div>
+                    )
+                  )}
                 </div>
               ) : (
                 <div className="text-center py-12">
@@ -359,237 +215,90 @@ export default function CampaignDonationPage() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Donation Progress</CardTitle>
+              <CardTitle>Payment Methods</CardTitle>
               <CardDescription>
-                Help {recipient.name} reach their goal
+                Available payment options for this campaign
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="font-medium">
-                    ${recipient.amountRaised} raised
-                  </span>
-                  <span className="text-muted-foreground">
-                    of ${recipient.amountNeeded} goal
-                  </span>
-                </div>
-                <div className="w-full bg-muted h-3 rounded-full overflow-hidden">
-                  <div
-                    className="bg-primary h-3 rounded-full"
-                    style={{
-                      width: `${
-                        (recipient.amountRaised / recipient.amountNeeded) * 100
-                      }%`,
-                    }}
-                  />
-                </div>
-                <div className="flex justify-between text-sm mt-2">
-                  <span className="text-muted-foreground">
-                    {Math.round(
-                      (recipient.amountRaised / recipient.amountNeeded) * 100
-                    )}
-                    % complete
-                  </span>
-                  <span className="text-muted-foreground">
-                    ${recipient.amountNeeded - recipient.amountRaised} still
-                    needed
-                  </span>
-                </div>
-              </div>
-
-              <div className="pt-2">
-                <div className="text-sm font-medium mb-2">Recent Donors</div>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Avatar className="h-8 w-8">
-                        <AvatarFallback>JS</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="text-sm font-medium">John S.</div>
-                        <div className="text-xs text-muted-foreground">
-                          2 days ago
-                        </div>
+              {campaign.payments.map((payment, index) => (
+                <div key={index} className="rounded-lg border p-4">
+                  <h3 className="font-medium mb-2 capitalize">
+                    {payment.methodType === "mobilepayment"
+                      ? "Mobile Payment"
+                      : payment.methodType}
+                  </h3>
+                  {payment.methodType === "bank" && (
+                    <>
+                      <div className="grid grid-cols-2 gap-1 text-sm">
+                        <span className="text-muted-foreground">
+                          Account Name:
+                        </span>
+                        <span>{payment.accountName}</span>
+                        <span className="text-muted-foreground">
+                          Account Number:
+                        </span>
+                        <span className="font-mono">
+                          {payment.accountNumber}
+                        </span>
                       </div>
+                    </>
+                  )}
+                  {payment.methodType === "crypto" && (
+                    <div className="grid grid-cols-2 gap-1 text-sm">
+                      <span className="text-muted-foreground">
+                        Wallet Address:
+                      </span>
+                      <span className="font-mono">{payment.cryptoAddress}</span>
                     </div>
-                    <div className="font-medium">$50</div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Avatar className="h-8 w-8">
-                        <AvatarFallback>MT</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="text-sm font-medium">Michael T.</div>
-                        <div className="text-xs text-muted-foreground">
-                          3 days ago
-                        </div>
-                      </div>
+                  )}
+                  {payment.methodType === "mobilepayment" && (
+                    <div className="grid grid-cols-2 gap-1 text-sm">
+                      <span className="text-muted-foreground">Provider:</span>
+                      <span>{payment.mobileProvider}</span>
+                      <span className="text-muted-foreground">Number:</span>
+                      <span className="font-mono">{payment.mobileNumber}</span>
                     </div>
-                    <div className="font-medium">$75</div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Avatar className="h-8 w-8">
-                        <AvatarFallback>EL</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="text-sm font-medium">Emma L.</div>
-                        <div className="text-xs text-muted-foreground">
-                          4 days ago
-                        </div>
-                      </div>
+                  )}
+                  {payment.methodType === "link" && payment.link && (
+                    <div className="grid grid-cols-2 gap-1 text-sm">
+                      <span className="text-muted-foreground">
+                        Payment Link:
+                      </span>
+                      <a
+                        href={payment.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline"
+                      >
+                        Open Link
+                      </a>
                     </div>
-                    <div className="font-medium">$100</div>
-                  </div>
+                  )}
                 </div>
-              </div>
+              ))}
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Make a Donation</CardTitle>
+              <CardTitle>Submit Donation Proof</CardTitle>
               <CardDescription>
-                Your donation goes directly to {recipient.name}
+                After making your donation, please submit proof of payment
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-muted-foreground">
-                100% of your donation will go directly to {recipient.name} to
-                help with their immediate needs. After clicking the button
-                below, you'll see payment information and be able to submit
-                proof of your donation.
-              </p>
-
-              <div className="rounded-lg border p-4 bg-muted/30">
-                <h3 className="font-medium text-sm mb-2">How it works:</h3>
-                <ol className="text-sm text-muted-foreground space-y-1 list-decimal pl-4">
-                  <li>Click the "Donate Now" button below</li>
-                  <li>Choose your preferred payment method</li>
-                  <li>Make the payment directly to the recipient</li>
-                  <li>Submit proof of your donation</li>
-                  <li>The recipient will confirm receipt</li>
-                </ol>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button className="w-full" onClick={handleDonate}>
-                <Heart className="h-4 w-4 mr-2" />
-                Donate Now
+            <CardContent>
+              <Button
+                className="w-full"
+                onClick={() => setIsProofModalOpen(true)}
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                Submit Proof
               </Button>
-            </CardFooter>
+            </CardContent>
           </Card>
         </div>
       </div>
-
-      {/* Donation Payment Modal */}
-      <Dialog open={isDonateModalOpen} onOpenChange={setIsDonateModalOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Donation Payment Information</DialogTitle>
-            <DialogDescription>
-              Please use one of the following payment methods to donate to{" "}
-              {recipient.name}.
-            </DialogDescription>
-          </DialogHeader>
-
-          <Tabs defaultValue="bank" onValueChange={setActivePaymentTab}>
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="bank">
-                <CreditCard className="h-4 w-4 mr-2" />
-                Bank Transfer
-              </TabsTrigger>
-              <TabsTrigger value="mobile">
-                <Phone className="h-4 w-4 mr-2" />
-                Mobile Payment
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="bank" className="mt-4 space-y-4">
-              <div className="rounded-lg border p-4">
-                <div className="space-y-3">
-                  {paymentMethods
-                    .filter((method) => method.methodType === "Bank")
-                    .map((method, index) => (
-                      <div key={index} className="space-y-1">
-                        <h3 className="font-medium">{method.bankName}</h3>
-                        <div className="grid grid-cols-2 text-sm">
-                          <span className="text-muted-foreground">
-                            Account Name:
-                          </span>
-                          <span>{method.accountName}</span>
-                        </div>
-                        <div className="grid grid-cols-2 text-sm">
-                          <span className="text-muted-foreground">
-                            Account Number:
-                          </span>
-                          <span className="font-mono">
-                            {method.accountNumber}
-                          </span>
-                        </div>
-                        {method.iban && (
-                          <div className="grid grid-cols-2 text-sm">
-                            <span className="text-muted-foreground">IBAN:</span>
-                            <span className="font-mono">{method.iban}</span>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                </div>
-              </div>
-
-              <div className="text-sm text-muted-foreground">
-                <p>
-                  Please include "{recipient.name} - Aid" in the transfer
-                  reference.
-                </p>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="mobile" className="mt-4 space-y-4">
-              <div className="rounded-lg border p-4">
-                <div className="space-y-3">
-                  {paymentMethods
-                    .filter((method) => method.methodType === "MobileMoney")
-                    .map((method, index) => (
-                      <div key={index} className="space-y-1">
-                        <h3 className="font-medium">{method.mobileProvider}</h3>
-                        <div className="grid grid-cols-2 text-sm">
-                          <span className="text-muted-foreground">Number:</span>
-                          <span className="font-mono">
-                            {method.mobileNumber}
-                          </span>
-                        </div>
-                        <div className="grid grid-cols-2 text-sm">
-                          <span className="text-muted-foreground">Name:</span>
-                          <span>{method.accountName}</span>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </div>
-
-              <div className="text-sm text-muted-foreground">
-                <p>
-                  Please include "{recipient.name} - Aid" in the payment note.
-                </p>
-              </div>
-            </TabsContent>
-          </Tabs>
-
-          <div className="border-t pt-4">
-            <p className="text-sm text-center mb-4">
-              After making your donation, please submit proof of payment to
-              verify your contribution.
-            </p>
-            <Button className="w-full" onClick={handleSubmitProof}>
-              Submit Donation Proof
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       {/* Proof Submission Modal */}
       <Dialog open={isProofModalOpen} onOpenChange={setIsProofModalOpen}>
@@ -622,11 +331,11 @@ export default function CampaignDonationPage() {
                 <Label htmlFor="payment-method">Payment Method</Label>
                 <Input
                   id="payment-method"
-                  value={
-                    activePaymentTab === "bank"
-                      ? "Bank Transfer"
-                      : "Mobile Payment"
-                  }
+                  // value={
+                  //   activePaymentTab === "bank"
+                  //     ? "Bank Transfer"
+                  //     : "Mobile Payment"
+                  // }
                   readOnly
                 />
               </div>

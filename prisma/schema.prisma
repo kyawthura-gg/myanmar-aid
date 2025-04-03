@@ -90,17 +90,13 @@ model Verification {
 // --- end of better-auth tables ---
 
 model Campaign {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(cuid())
   title       String
   description String
   photos      String // stringify array of image URLs
   status      String // "pending", "active", "rejected"
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
-
-  // Contact Info (Telegram added later via UI)
-  facebookLink String?
-  viberLink    String?
 
   // Relations
   userId    String
@@ -110,9 +106,9 @@ model Campaign {
 }
 
 model CampaignBanking {
-  id            Int       @id @default(autoincrement())
+  id            String    @id @default(cuid())
   methodType    String // "bank", "crypto", "mobilepayment", "link"
-  country       String    @default("MM") // ISO 3166-1 alpha-2 code
+  country       String    @default("Myanmar")
   accountName   String?
   accountNumber String?
   cryptoAddress String?
@@ -120,7 +116,7 @@ model CampaignBanking {
   isVerified    Boolean   @default(false)
   createdAt     DateTime  @default(now())
   // Dual-linking: To both Campaign AND User
-  campaignId    Int?
+  campaignId    String?
   campaign      Campaign? @relation(fields: [campaignId], references: [id])
   // For bank-specific fields
   iban          String?
@@ -138,7 +134,7 @@ model CampaignBanking {
 }
 
 model Donation {
-  id             Int       @id @default(autoincrement())
+  id             String    @id @default(cuid())
   amount         Float
   screenshotPath String
   isAnonymous    Boolean   @default(false)
@@ -154,7 +150,7 @@ model Donation {
   donorEmail     String?
   // Relations
   campaign       Campaign  @relation(fields: [campaignId], references: [id])
-  campaignId     Int
+  campaignId     String
 
   @@index([status])
   @@index([campaignId])

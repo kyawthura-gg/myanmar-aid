@@ -1,5 +1,7 @@
 import { createCallerFactory, createTRPCRouter } from "@/server/trpc"
+import { campaignRouter } from "./routers/campaign"
 import { postRouter } from "./routers/post"
+import { uploadRouter } from "./routers/upload"
 import { userRouter } from "./routers/user"
 
 /**
@@ -10,6 +12,8 @@ import { userRouter } from "./routers/user"
 export const appRouter = createTRPCRouter({
   post: postRouter,
   user: userRouter,
+  campaign: campaignRouter,
+  upload: uploadRouter,
 })
 
 // export type definition of API

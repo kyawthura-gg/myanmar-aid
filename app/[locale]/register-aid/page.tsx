@@ -139,11 +139,12 @@ export default function RegisterFamilyPage() {
       </Link>
 
       <Card>
-         <CardHeader>
+        <CardHeader>
           <CardTitle>Register as Aid Recipient</CardTitle>
           <CardDescription>
-            Please provide your details to help donors understand your needs. Open to both 
-            individuals and organizations. All information will be verified.
+            Please provide your details to help donors understand your needs.
+            Open to both individuals and organizations. All information will be
+            verified.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -326,7 +327,7 @@ export default function RegisterFamilyPage() {
                             type="tel"
                             placeholder="+959xxxxxxxxx"
                             {...field}
-                            value={field.value ??  ""}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -345,7 +346,7 @@ export default function RegisterFamilyPage() {
                             type="tel"
                             placeholder="+959xxxxxxxxx"
                             {...field}
-                            value={field.value ??  ""}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -364,7 +365,7 @@ export default function RegisterFamilyPage() {
                             type="tel"
                             placeholder="+959xxxxxxxxx"
                             {...field}
-                            value={field.value ??  ""}
+                            value={field.value ?? ""}
                           />
                         </FormControl>
                         <FormMessage />

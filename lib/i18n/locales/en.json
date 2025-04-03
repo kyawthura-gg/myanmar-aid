@@ -17,7 +17,7 @@
     "learnMore": "Learn More"
   },
   "home": {
-     "title": "Direct Aid for Myanmar Earthquake Relief",
+    "title": "Direct Aid for Myanmar Earthquake Relief",
     "subtitle": "Support affected communities directly. 100% of donations reach those in need, with full transparency and verification.",
     "donateButton": "Donate Now",
     "registerButton": "Request Aid",
@@ -41,8 +41,6 @@
     "footer": "© 2025 Myanmar Aid Connect. All rights reserved."
   },
   "donate": {
-    "title": "Donate Directly",
-    "subtitle": "Browse verified recipients and donate directly to those in need",
     "browseRecipients": "Browse Recipients",
     "makeDonation": "Make Donation",
     "search": "Search by name, location, or needs...",
@@ -51,7 +49,6 @@
     "families": "Families",
     "individuals": "Individuals",
     "organizations": "Organizations",
-    "viewDetails": "View Details",
     "donateToThisRecipient": "Donate to this Recipient",
     "noRecipients": "No recipients match your search criteria.",
     "recipientInformation": "Recipient Information",
@@ -75,7 +72,13 @@
     "emailPlaceholder": "Enter your email for receipt",
     "emailDescription": "We'll send you payment instructions and a receipt.",
     "proceedToPayment": "Proceed to Payment",
-    "afterPayment": "After payment, you'll be asked to upload proof of transaction. The recipient will confirm receipt of funds."
+    "afterPayment": "After payment, you'll be asked to upload proof of transaction. The recipient will confirm receipt of funds.",
+    "title": "Support Active Campaigns",
+    "subtitle": "Browse and support verified campaigns helping earthquake-affected communities",
+    "searchPlaceholder": "Search campaigns by title or description...",
+    "noResults": "No campaigns match your search criteria.",
+    "viewDetails": "View Details",
+    "donate": "Donate Now"
   },
   "recipientDetail": {
     "about": "About",
