@@ -116,21 +116,21 @@ export default function CreateCampaignPage() {
 
       await createMutation.mutateAsync({ ...values, photos: uploadedImages })
       toast.success("Campaign created successfully!")
-      router.push("/campaigns")
+      router.push("/account/campaigns")
     } catch (error) {
       toast.error("Failed to create campaign")
     }
   }
 
   // if (!session?.user) {
-  //   router.push("/auth/signin")
+  //   router.push("/auth/login")
   //   return null
   // }
 
   return (
     <div className="container max-w-3xl py-10">
       <Link
-        href="/campaigns"
+        href="/account/campaigns"
         className="flex items-center gap-2 text-sm mb-6 hover:underline"
       >
         <ArrowLeft className="h-4 w-4" />

@@ -30,10 +30,10 @@ import {
   Upload,
   X,
 } from "lucide-react"
-import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useState } from "react"
 
+import { useSafeBack } from "@/hooks/use-safe-back"
 import { api } from "@/trpc/react"
 import Loading from "./loading"
 
@@ -41,6 +41,7 @@ export default function CampaignDonationPage() {
   const params = useParams()
   const [isProofModalOpen, setIsProofModalOpen] = useState(false)
   const [proofUploaded, setProofUploaded] = useState(false)
+  const safeBack = useSafeBack()
 
   const { data: campaign, isLoading } = api.campaign.getActiveById.useQuery(
     params.id as string,
@@ -62,8 +63,9 @@ export default function CampaignDonationPage() {
         <p className="text-muted-foreground mb-6">
           The campaign you're looking for doesn't exist or has been removed.
         </p>
-        <Button asChild>
-          <Link href="/donate">Back to Campaigns</Link>
+        <Button variant="link" onClick={() => safeBack("/")}>
+          <ArrowLeft className="h-4 w-4" />
+          Back to home
         </Button>
       </div>
     )
@@ -71,13 +73,10 @@ export default function CampaignDonationPage() {
 
   return (
     <div className="container py-10">
-      <Link
-        href="/donate"
-        className="flex items-center gap-2 text-sm mb-6 hover:underline"
-      >
+      <Button variant="link" onClick={() => safeBack("/")}>
         <ArrowLeft className="h-4 w-4" />
-        Back to all campaigns
-      </Link>
+        Back to home
+      </Button>
 
       <div className="grid gap-8 md:grid-cols-3">
         <div className="md:col-span-2 space-y-6">

@@ -24,10 +24,8 @@ export const userRouter = createTRPCRouter({
       if (!input.termsAccepted) {
         throw new Error("You must accept the terms and conditions")
       }
-
-      // Update user profile
       return ctx.db.user.update({
-        where: { id: ctx.session.user.id },
+        where: { id: ctx.session.user.id, onboardingCompleted: false },
         data: {
           name: input.name,
           accountType: input.accountType,
@@ -37,6 +35,7 @@ export const userRouter = createTRPCRouter({
           whatsappPhoneNumber: input.whatsappPhoneNumber,
           image: input.image,
           status: "pending",
+          onboardingCompleted: true,
         },
       })
     }),

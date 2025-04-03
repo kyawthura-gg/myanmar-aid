@@ -37,6 +37,7 @@ model User {
   accounts            Account[]
   campaigns           Campaign[]
   verifiedDonations   Donation[]
+  onboardingCompleted Boolean    @default(false)
 
   @@unique([email])
   @@map("user")

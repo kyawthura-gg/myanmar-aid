@@ -27,7 +27,7 @@ export default function CampaignsPage() {
           </p>
         </div>
         <Button asChild>
-          <Link href="/campaigns/create">
+          <Link href="/account/campaigns/create">
             <Plus className="h-4 w-4 mr-2" />
             Create Campaign
           </Link>
@@ -65,10 +65,14 @@ export default function CampaignsPage() {
               </CardContent>
               <CardFooter className="flex justify-between">
                 <Button variant="outline" asChild>
-                  <Link href={`/campaigns/${campaign.id}`}>View Details</Link>
+                  <Link href={`/account/campaigns/${campaign.id}`}>
+                    View Details
+                  </Link>
                 </Button>
                 <Button variant="secondary" asChild>
-                  <Link href={`/campaigns/${campaign.id}/edit`}>Edit</Link>
+                  <Link href={`/account/campaigns/${campaign.id}/edit`}>
+                    Edit
+                  </Link>
                 </Button>
               </CardFooter>
             </Card>
@@ -84,7 +88,7 @@ export default function CampaignsPage() {
           </CardHeader>
           <CardContent>
             <Button asChild>
-              <Link href="/campaigns/create">
+              <Link href="/account/campaigns/create">
                 <Plus className="h-4 w-4 mr-2" />
                 Create Your First Campaign
               </Link>

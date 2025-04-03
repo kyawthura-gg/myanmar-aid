@@ -14,8 +14,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { signIn } from "@/lib/auth-client"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 export function LoginForm() {
+  const router = useRouter()
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const form = e.target as HTMLFormElement
@@ -32,6 +34,7 @@ export function LoginForm() {
         },
         onSuccess: () => {
           toast.success("You have been logged in!")
+          router.replace("/account/campaigns")
         },
       }
     )
@@ -116,7 +119,7 @@ export function LoginForm() {
         </div> */}
         <div className="mt-4 text-center text-sm">
           Don&apos;t have an account?{" "}
-          <Link href="/auth/signup" className="underline">
+          <Link href="/register-need-campaign" className="underline">
             Sign up
           </Link>
         </div>
