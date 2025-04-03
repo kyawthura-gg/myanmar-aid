@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl"
 import { notFound } from "next/navigation"
 import type React from "react"
 import "@/app/globals.css"
+import { SiteHeader } from "@/components/site-header"
 import { Toaster } from "@/components/ui/sonner"
 import { TRPCReactProvider } from "@/trpc/react"
 
@@ -45,6 +46,7 @@ export default async function RootLayout({
       >
         <TRPCReactProvider>
           <NextIntlClientProvider locale={locale} messages={messages}>
+            <SiteHeader />
             {children}
           </NextIntlClientProvider>
         </TRPCReactProvider>

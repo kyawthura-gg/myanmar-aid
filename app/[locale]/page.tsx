@@ -1,11 +1,10 @@
 "use client"
 
-import { Heart, SearchIcon, Users } from "lucide-react"
+import { Heart, ImageIcon, SearchIcon, Users, WalletIcon } from "lucide-react"
 import { useTranslations } from "next-intl"
 import Link from "next/link"
 
-import { SiteHeader } from "@/components/site-header"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -16,15 +15,15 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { getStorageFullURL } from "@/lib/utils"
+import { useSession } from "@/lib/auth-client"
+import { cn, getStorageFullURL } from "@/lib/utils"
 import { api } from "@/trpc/react"
-import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 export default function Home() {
-  const router = useRouter()
   const t = useTranslations("home")
   const [searchTerm, setSearchTerm] = useState("")
+  const { data: session } = useSession()
 
   const { data: campaigns, isLoading } = api.campaign.listActive.useQuery()
 
@@ -39,20 +38,23 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <SiteHeader />
       <main className="flex-1">
         <div className="max-w-3xl mx-auto text-center mb-12 py-12 md:py-24 lg:py-32">
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 md:text-5xl lg:text-6xl">
-            Direct Support for Myanmar Earthquake Victims
+            Direct Help for Those Affected by the Myanmar Earthquake
           </h1>
           <p className="mt-6 text-xl text-gray-600">
-            100% of your donation goes directly to verified families affected by
-            the earthquake.
+            100% of your support goes directly to verified individuals,
+            families, and communities affected by the earthquake.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10">
-            <Button size="lg">Donate Now</Button>
-            <Button size="lg" variant="outline">
-              Start a fundraiser
+          <div
+            className={cn(
+              "flex flex-col sm:flex-row gap-4 justify-center mt-10",
+              session?.user?.onboardingCompleted && "hidden"
+            )}
+          >
+            <Button size="lg" asChild>
+              <Link href="/register-need-campaign">Start a need campaign</Link>
             </Button>
           </div>
         </div>
@@ -99,72 +101,91 @@ export default function Home() {
               ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {filteredCampaigns.map((campaign) => (
-                    <Card key={campaign.id} className="overflow-hidden">
-                      <CardHeader className="p-4">
-                        {campaign.photos?.[0] ? (
-                          <img
-                            src={getStorageFullURL(campaign.photos[0])}
-                            alt={campaign.title}
-                            className="w-full h-40 object-cover"
-                          />
-                        ) : null}
-                        <div className="flex justify-between items-start">
-                          <div className="flex items-center gap-2">
-                            <Avatar>
-                              <AvatarFallback>
-                                <Users className="h-4 w-4" />
-                              </AvatarFallback>
+                    <Link
+                      key={campaign.id}
+                      href={`/need-campaigns/${campaign.id}`}
+                      className="block group"
+                    >
+                      <Card className="h-full overflow-hidden">
+                        <div className="relative">
+                          {campaign.photos?.[0] ? (
+                            <img
+                              src={getStorageFullURL(campaign.photos[0])}
+                              alt={campaign.title}
+                              className="w-full h-52 object-cover transition-transform duration-500 group-hover:scale-110"
+                            />
+                          ) : (
+                            <div className="w-full h-52 bg-muted flex items-center justify-center">
+                              <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                            </div>
+                          )}
+                          <div className="absolute top-2 right-2 flex gap-2">
+                            <Badge
+                              variant={
+                                campaign.status === "active"
+                                  ? "default"
+                                  : "secondary"
+                              }
+                              className="capitalize"
+                            >
+                              {/* //TODO show type */}
+                              {campaign.status}
+                            </Badge>
+                          </div>
+                        </div>
+
+                        <CardHeader className="p-4">
+                          <div className="flex items-start gap-3">
+                            <Avatar className="h-10 w-10 border">
+                              {campaign.user?.image ? (
+                                <AvatarImage src={campaign.user.image} />
+                              ) : (
+                                <AvatarFallback>
+                                  <Users className="h-4 w-4" />
+                                </AvatarFallback>
+                              )}
                             </Avatar>
-                            <div>
-                              <CardTitle className="text-lg">
+                            <div className="space-y-1">
+                              <CardTitle className="text-lg line-clamp-1">
                                 {campaign.title}
                               </CardTitle>
-                              {/* <div className="flex items-center text-sm text-muted-foreground">
-                              <MapPin className="h-3 w-3 mr-1" />
-                              {campaign.location || "Myanmar"}
-                            </div> */}
+                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                <span>{campaign.user?.name}</span>
+                                {/* <span>•</span> */}
+                                {/* <time
+                                  dateTime={campaign.createdAt.toISOString()}
+                                >
+                                  {formatDistanceToNow(campaign.createdAt, {
+                                    addSuffix: true,
+                                  })}
+                                </time> */}
+                              </div>
                             </div>
                           </div>
-                          <Badge variant="outline">{campaign.status}</Badge>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="p-4 pt-0">
-                        <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                          {campaign.description}
-                        </p>
-                        {/* <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span>Raised: ${campaign.amountRaised || 0}</span>
-                          <span>Goal: ${campaign.goalAmount || 0}</span>
-                        </div>
-                        <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
-                          <div
-                            className="bg-primary h-2 rounded-full"
-                            style={{
-                              width: `${((campaign.amountRaised || 0) / (campaign.goalAmount || 1)) * 100}%`,
-                            }}
-                          />
-                        </div>
-                      </div> */}
-                      </CardContent>
-                      <CardFooter className="p-4 pt-0 flex gap-2">
-                        <Button
-                          variant="outline"
-                          className="flex-1"
-                          onClick={() => router.push(`/donate/${campaign.id}`)}
-                        >
-                          View Details
-                        </Button>
-                        <Button
-                          className="flex-1"
-                          onClick={() =>
-                            router.push(`/donate/${campaign.id}?donate=true`)
-                          }
-                        >
-                          Donate
-                        </Button>
-                      </CardFooter>
-                    </Card>
+                        </CardHeader>
+
+                        <CardContent className="p-4 pt-0">
+                          <p className="text-sm text-muted-foreground line-clamp-2">
+                            {campaign.description}
+                          </p>
+                        </CardContent>
+
+                        <CardFooter className="p-4 pt-0">
+                          <div className="flex items-center gap-4 text-sm">
+                            <div className="flex items-center gap-1">
+                              <WalletIcon className="h-4 w-4" />
+                              <span>
+                                {campaign.payments.length} payment methods
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Heart className="h-4 w-4" />
+                              <span>{campaign.donations.length} donations</span>
+                            </div>
+                          </div>
+                        </CardFooter>
+                      </Card>
+                    </Link>
                   ))}
                 </div>
               )}

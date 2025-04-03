@@ -34,7 +34,6 @@ import { signUp, useSession } from "@/lib/auth-client"
 import { api } from "@/trpc/react"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
 const step1Schema = z
@@ -71,7 +70,6 @@ const step2Schema = z.object({
 })
 
 export default function RegisterFamilyPage() {
-  const router = useRouter()
   const { data: session } = useSession()
   const me = api.user.me.useQuery(undefined, { enabled: !!session?.user })
   const createMutation = api.user.create.useMutation()
@@ -125,7 +123,7 @@ export default function RegisterFamilyPage() {
       image: null, //TODO
     })
     toast.success("Profile updated successfully!")
-    router.replace("/")
+    window.location.replace("/account/campaigns/create")
   }
 
   return (
@@ -140,7 +138,7 @@ export default function RegisterFamilyPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Register as Aid Recipient</CardTitle>
+          <CardTitle>Register to request need campaign</CardTitle>
           <CardDescription>
             Please provide your details to help donors understand your needs.
             Open to both individuals and organizations. All information will be

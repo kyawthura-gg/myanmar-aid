@@ -100,6 +100,11 @@ export const campaignRouter = createTRPCRouter({
             image: true,
           },
         },
+        donations: {
+          select: {
+            id: true,
+          },
+        },
       },
     })
 

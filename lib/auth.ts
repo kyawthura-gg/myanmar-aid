@@ -25,6 +25,11 @@ export const getAuth = (db: D1Database) => {
         accountType: {
           type: "string",
           nullable: true,
+          required: false,
+        },
+        onboardingCompleted: {
+          type: "boolean",
+          required: false,
         },
       },
     },
