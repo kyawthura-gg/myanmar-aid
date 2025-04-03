@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -21,77 +21,140 @@ import {
 } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
+import { api } from "@/trpc/react";
 import { CheckCircle, Clock, Search, ShieldAlert, User } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 // Mock data for pending verifications
-const pendingVerifications = [
-  {
-    id: "v1",
-    name: "Kyaw Kyaw",
-    location: "Yangon",
-    submittedAt: "2025-03-28T14:30:00Z",
-    type: "Family Registration",
-    status: "pending",
-  },
-  {
-    id: "v2",
-    name: "Ma Hla",
-    location: "Mandalay",
-    submittedAt: "2025-03-28T10:15:00Z",
-    type: "Family Registration",
-    status: "pending",
-  },
-  {
-    id: "v3",
-    name: "U Aung",
-    location: "Bago",
-    submittedAt: "2025-03-27T16:45:00Z",
-    type: "Donation Confirmation",
-    status: "pending",
-  },
-]
+// const pendingVerifications = [
+//   {
+//     id: "v1",
+//     name: "Kyaw Kyaw",
+//     location: "Yangon",
+//     submittedAt: "2025-03-28T14:30:00Z",
+//     type: "Family Registration",
+//     status: "pending",
+//   },
+//   {
+//     id: "v2",
+//     name: "Ma Hla",
+//     location: "Mandalay",
+//     submittedAt: "2025-03-28T10:15:00Z",
+//     type: "Family Registration",
+//     status: "pending",
+//   },
+//   {
+//     id: "v3",
+//     name: "U Aung",
+//     location: "Bago",
+//     submittedAt: "2025-03-27T16:45:00Z",
+//     type: "Donation Confirmation",
+//     status: "pending",
+//   },
+// ]
 
-// Mock data for donation verifications
-const donationVerifications = [
-  {
-    id: "d1",
-    donor: "John Smith",
-    recipient: "Kyaw Family",
-    amount: 150,
-    date: "2025-03-28T09:20:00Z",
-    status: "pending",
-  },
-  {
-    id: "d2",
-    donor: "Sarah Johnson",
-    recipient: "Min Family",
-    amount: 200,
-    date: "2025-03-27T14:10:00Z",
-    status: "pending",
-  },
-]
+// // Mock data for donation verifications
+// const donationVerifications = [
+//   {
+//     id: "d1",
+//     donor: "John Smith",
+//     recipient: "Kyaw Family",
+//     amount: 150,
+//     date: "2025-03-28T09:20:00Z",
+//     status: "pending",
+//   },
+//   {
+//     id: "d2",
+//     donor: "Sarah Johnson",
+//     recipient: "Min Family",
+//     amount: 200,
+//     date: "2025-03-27T14:10:00Z",
+//     status: "pending",
+//   },
+// ]
 
 export default function AdminPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedVerification, setSelectedVerification] = useState<
-    string | null
+  const [adminNotes , setAdminNotes] = useState("");
+  const [donationVerificationStatus, setDonationVerificationStatus] = useState<any>("pending")
+  const [recipientConfirmationStatus, setRecipientConfirmationStatus] = useState<string>("pending")
+  const [verification, setVerfication] = useState<any>();
+  const [donations, setDonations] = useState<any>();
+  const [selectedDonation, setSelectedDonation] = useState<any>(null);
+    const [selectedVerification, setSelectedVerification] = useState<
+    any
   >(null)
-  const [selectedDonation, setSelectedDonation] = useState<string | null>(null)
+  const { data: campaigns, error , refetch} = api.campaign.campaignForAdmin.useQuery({ status: "pending" })
+  const updateCampaignMutation = api.campaign.updateCampaignStatus.useMutation();
+  const { data: donation , refetch: refetchDonation} = api.donation.donationForAdmin.useQuery({ status: "pending" })
+  const updateDonationMutation = api.donation.updateDonationStatus.useMutation();
 
-  const filteredVerifications = pendingVerifications.filter(
-    (verification) =>
-      verification.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      verification.location.toLowerCase().includes(searchTerm.toLowerCase())
-  )
 
-  const selectedVerificationData = pendingVerifications.find(
-    (v) => v.id === selectedVerification
-  )
-  const selectedDonationData = donationVerifications.find(
-    (d) => d.id === selectedDonation
-  )
+  async function handleApprove() {
+      await updateCampaignMutation.mutateAsync({
+        status: "active",
+        id: selectedVerification.id
+    })
+    refetch();
+  }
+  async function handleReject() {
+      await updateCampaignMutation.mutateAsync({
+        status: "rejected",
+        id: selectedVerification.id
+    })
+    refetch();
+  }
+
+  async function handleUpdateDonationMutation(){
+      await updateDonationMutation.mutateAsync({
+        status: donationVerificationStatus,
+        id: selectedDonation.id,
+        adminNote: adminNotes,
+    })
+    refetchDonation();
+    setSelectedDonation(null);
+  }
+
+  async function handleFlagAsSuspicious(){
+      await updateDonationMutation.mutateAsync({
+        status: "rejected",
+        id: selectedDonation.id,
+        adminNote: adminNotes,
+    })
+    refetchDonation();
+    setSelectedDonation(null);
+  }
+
+  // useEffect(() => {
+  //   if (campaigns) {
+  //     setVerfication(campaigns);
+  //     setSelectedVerification(null);
+  //   }
+  //   if(donation){
+  //     setDonations(donation);
+  //     setSelectedDonation(null);
+  //   }
+  // }, [campaigns])
+
+  const [searchTerm, setSearchTerm] = useState("")
+
+
+  // const filteredVerifications = pendingVerifications.filter(
+  //   (verification) =>
+  //     verification.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     verification.location.toLowerCase().includes(searchTerm.toLowerCase())
+  // )
+
+  const handleAdminVerificationChange = (value: any)=> {
+    setDonationVerificationStatus(value);
+  }
+  const handleRecipientConfirmationChange = (value: any)=> {
+    setRecipientConfirmationStatus(value);
+  }
+
+  // const selectedDonationData = donationVerifications.find(
+  //   (d) => d.id === selectedDonation
+  // )
 
   return (
     <div className="container py-10">
@@ -128,21 +191,21 @@ export default function AdminPage() {
               </div>
 
               <div className="border rounded-md">
-                {filteredVerifications.length > 0 ? (
+                {campaigns ? (
                   <div className="divide-y">
-                    {filteredVerifications.map((verification) => (
+                    {campaigns.map((verification : any) => (
                       <div
                         key={verification.id}
                         className={`p-3 cursor-pointer hover:bg-muted ${selectedVerification === verification.id ? "bg-muted" : ""}`}
-                        onClick={() => setSelectedVerification(verification.id)}
+                        onClick={() => setSelectedVerification(verification)}
                       >
                         <div className="flex justify-between items-start">
                           <div>
                             <div className="font-medium">
-                              {verification.name}
+                              {verification.title}
                             </div>
                             <div className="text-sm text-muted-foreground">
-                              {verification.location}
+                              {verification.description}
                             </div>
                           </div>
                           <Badge
@@ -150,14 +213,14 @@ export default function AdminPage() {
                             className="flex items-center gap-1"
                           >
                             <Clock className="h-3 w-3" />
-                            <span>Pending</span>
+                            <span>{verification.status}</span>
                           </Badge>
                         </div>
                         <div className="flex justify-between items-center mt-2 text-xs text-muted-foreground">
                           <span>{verification.type}</span>
                           <span>
                             {new Date(
-                              verification.submittedAt
+                              verification.createdAt
                             ).toLocaleDateString()}
                           </span>
                         </div>
@@ -173,15 +236,15 @@ export default function AdminPage() {
             </div>
 
             <div className="md:col-span-2">
-              {selectedVerificationData ? (
+              {selectedVerification ? (
                 <Card>
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div>
-                        <CardTitle>{selectedVerificationData.name}</CardTitle>
+                        <CardTitle>{selectedVerification.name}</CardTitle>
                         <CardDescription>
-                          {selectedVerificationData.type} -{" "}
-                          {selectedVerificationData.location}
+                          {selectedVerification.type} -{" "}
+                          {selectedVerification.location}
                         </CardDescription>
                       </div>
                       <Badge
@@ -189,7 +252,7 @@ export default function AdminPage() {
                         className="flex items-center gap-1"
                       >
                         <Clock className="h-3 w-3" />
-                        <span>Pending</span>
+                        <span>{selectedVerification.user.status}</span>
                       </Badge>
                     </div>
                   </CardHeader>
@@ -205,7 +268,7 @@ export default function AdminPage() {
                               Full Name:
                             </span>
                             <span className="col-span-2">
-                              {selectedVerificationData.name}
+                              {selectedVerification.user.name}
                             </span>
                           </div>
                           <div className="grid grid-cols-3">
@@ -213,7 +276,7 @@ export default function AdminPage() {
                               Location:
                             </span>
                             <span className="col-span-2">
-                              {selectedVerificationData.location}
+                              {selectedVerification.location}
                             </span>
                           </div>
                           <div className="grid grid-cols-3">
@@ -221,15 +284,15 @@ export default function AdminPage() {
                               Phone:
                             </span>
                             <span className="col-span-2">
-                              +95 9 123 456 789
+                              {selectedVerification.user.phone}
                             </span>
                           </div>
-                          <div className="grid grid-cols-3">
+                          {/* <div className="grid grid-cols-3">
                             <span className="text-muted-foreground">
                               Family Size:
                             </span>
                             <span className="col-span-2">5 members</span>
-                          </div>
+                          </div> */}
                         </div>
                       </div>
 
@@ -261,12 +324,7 @@ export default function AdminPage() {
                         Situation Description
                       </h3>
                       <p className="text-sm text-muted-foreground">
-                        Our family of 5 lost our home in the earthquake. We are
-                        currently staying in a temporary shelter made of
-                        tarpaulin. We need assistance with building materials to
-                        construct a more stable shelter before the rainy season.
-                        We also need food supplies as I have lost my job at the
-                        local market which was destroyed.
+                        {selectedVerification.description}
                       </p>
                     </div>
 
@@ -280,13 +338,17 @@ export default function AdminPage() {
                   </CardContent>
                   <CardFooter className="flex justify-between">
                     <div className="flex gap-2">
-                      <Button variant="destructive">
+                      <Button onClick={()=> {
+                        handleReject();
+                      }} variant="destructive">
                         <ShieldAlert className="h-4 w-4 mr-2" />
                         Reject
                       </Button>
                       <Button variant="outline">Request More Info</Button>
                     </div>
-                    <Button>
+                    <Button onClick={()=> {
+                      handleApprove();
+                    }}>
                       <CheckCircle className="h-4 w-4 mr-2" />
                       Approve
                     </Button>
@@ -323,11 +385,12 @@ export default function AdminPage() {
 
               <div className="border rounded-md">
                 <div className="divide-y">
-                  {donationVerifications.map((donation) => (
+                  { donation ? 
+                  donation.map((donation: any) => (
                     <div
                       key={donation.id}
                       className={`p-3 cursor-pointer hover:bg-muted ${selectedDonation === donation.id ? "bg-muted" : ""}`}
-                      onClick={() => setSelectedDonation(donation.id)}
+                      onClick={() => setSelectedDonation(donation)}
                     >
                       <div className="flex justify-between items-start">
                         <div>
@@ -335,7 +398,7 @@ export default function AdminPage() {
                             ${donation.amount} Donation
                           </div>
                           <div className="text-sm text-muted-foreground">
-                            To: {donation.recipient}
+                            To: {donation.campaign.title}
                           </div>
                         </div>
                         <Badge
@@ -343,33 +406,35 @@ export default function AdminPage() {
                           className="flex items-center gap-1"
                         >
                           <Clock className="h-3 w-3" />
-                          <span>Pending</span>
+                          <span>{donation.status}</span>
                         </Badge>
                       </div>
                       <div className="flex justify-between items-center mt-2 text-xs text-muted-foreground">
-                        <span>From: {donation.donor}</span>
+                        <span>From: {donation.donorName}</span>
                         <span>
-                          {new Date(donation.date).toLocaleDateString()}
+                          {new Date(donation.donatedAt).toLocaleDateString()}
                         </span>
                       </div>
                     </div>
-                  ))}
+                  ))
+                  : <></>
+                }
                 </div>
               </div>
             </div>
 
             <div className="md:col-span-2">
-              {selectedDonationData ? (
+              {selectedDonation ? (
                 <Card>
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div>
                         <CardTitle>
-                          ${selectedDonationData.amount} Donation
+                          ${selectedDonation.amount} Donation
                         </CardTitle>
                         <CardDescription>
-                          From {selectedDonationData.donor} to{" "}
-                          {selectedDonationData.recipient}
+                          From {selectedDonation.donor} to{" "}
+                          {selectedDonation.recipient}
                         </CardDescription>
                       </div>
                       <Badge
@@ -377,7 +442,7 @@ export default function AdminPage() {
                         className="flex items-center gap-1"
                       >
                         <Clock className="h-3 w-3" />
-                        <span>Pending</span>
+                        <span>{selectedDonation.status}</span>
                       </Badge>
                     </div>
                   </CardHeader>
@@ -393,14 +458,14 @@ export default function AdminPage() {
                               Amount:
                             </span>
                             <span className="col-span-2">
-                              ${selectedDonationData.amount}
+                              ${selectedDonation.amount}
                             </span>
                           </div>
                           <div className="grid grid-cols-3">
                             <span className="text-muted-foreground">Date:</span>
                             <span className="col-span-2">
                               {new Date(
-                                selectedDonationData.date
+                                selectedDonation.donatedAt
                               ).toLocaleString()}
                             </span>
                           </div>
@@ -409,7 +474,7 @@ export default function AdminPage() {
                               Donor:
                             </span>
                             <span className="col-span-2">
-                              {selectedDonationData.donor}
+                              {selectedDonation.donorName}
                             </span>
                           </div>
                           <div className="grid grid-cols-3">
@@ -417,7 +482,7 @@ export default function AdminPage() {
                               Recipient:
                             </span>
                             <span className="col-span-2">
-                              {selectedDonationData.recipient}
+                              {selectedDonation.campaign.user.name}
                             </span>
                           </div>
                           <div className="grid grid-cols-3">
@@ -453,7 +518,7 @@ export default function AdminPage() {
                           <Label htmlFor="admin-verified">
                             Admin Verification:
                           </Label>
-                          <Select defaultValue="pending">
+                          <Select value={donationVerificationStatus} onValueChange={handleAdminVerificationChange}>
                             <SelectTrigger
                               id="admin-verified"
                               className="w-[180px]"
@@ -468,11 +533,11 @@ export default function AdminPage() {
                           </Select>
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        {/* <div className="flex items-center gap-2">
                           <Label htmlFor="recipient-confirmed">
                             Recipient Confirmation:
                           </Label>
-                          <Select defaultValue="pending">
+                          <Select value={recipientConfirmationStatus} onValueChange={handleRecipientConfirmationChange}>
                             <SelectTrigger
                               id="recipient-confirmed"
                               className="w-[180px]"
@@ -487,13 +552,15 @@ export default function AdminPage() {
                               <SelectItem value="disputed">Disputed</SelectItem>
                             </SelectContent>
                           </Select>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
 
                     <div>
                       <h3 className="text-sm font-medium mb-2">Admin Notes</h3>
                       <Textarea
+                        onChange={(e: any)=> setAdminNotes(e.target.value)}
+                        value={adminNotes}
                         placeholder="Add verification notes here..."
                         className="min-h-[100px]"
                       />
@@ -501,13 +568,13 @@ export default function AdminPage() {
                   </CardContent>
                   <CardFooter className="flex justify-between">
                     <div className="flex gap-2">
-                      <Button variant="destructive">
+                      <Button onClick={handleFlagAsSuspicious} variant="destructive">
                         <ShieldAlert className="h-4 w-4 mr-2" />
                         Flag as Suspicious
                       </Button>
                       <Button variant="outline">Contact Donor</Button>
                     </div>
-                    <Button>
+                    <Button onClick={handleUpdateDonationMutation}>
                       <CheckCircle className="h-4 w-4 mr-2" />
                       Verify Donation
                     </Button>

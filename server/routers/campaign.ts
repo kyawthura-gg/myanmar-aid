@@ -30,6 +30,36 @@ const campaignSchema = z.object({
 })
 
 export const campaignRouter = createTRPCRouter({
+  updateCampaignStatus: protectedProcedure.input(
+    z.object({
+      status: z.enum(["pending", "active", "rejected"]),
+      id: z.string().min(1)
+    })
+  ).mutation(async ({ ctx, input}) => {
+    return ctx.db.campaign.update({
+      where: {
+        id: input.id
+      },
+      data: {
+        status: input.status
+      }
+    })
+  }),
+  campaignForAdmin: protectedProcedure.input(z.object({
+    status: z.enum(["pending", "active"]),
+  })).query(async ({ ctx, input }) => {
+    return ctx.db.campaign.findMany({
+      where: {
+        status: input.status,
+      },
+      include: {
+        user: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    })
+  }),
   list: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.campaign.findMany({
       where: {
@@ -54,7 +84,7 @@ export const campaignRouter = createTRPCRouter({
         },
       })
     }),
-  listActive: publicProcedure.query(async ({ ctx }) => {
+  listActive: protectedProcedure.query(async ({ ctx }) => {
     const campaigns = await ctx.db.campaign.findMany({
       where: {
         status: "active",
@@ -78,7 +108,7 @@ export const campaignRouter = createTRPCRouter({
       photos: parsePhotos(campaign.photos),
     }))
   }),
-  getActiveById: publicProcedure
+  getActiveById: protectedProcedure
     .input(z.string())
     .query(async ({ ctx, input }) => {
       return ctx.db.campaign.findUnique({

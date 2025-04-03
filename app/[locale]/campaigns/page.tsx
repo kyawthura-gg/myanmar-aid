@@ -16,6 +16,7 @@ import { api } from "@/trpc/react"
 
 export default function CampaignsPage() {
   const { data: campaigns, isLoading } = api.campaign.list.useQuery()
+  // const { data: campaigns, isLoading } = api.campaign.campaignListForAdmin.useQuery({status: "pending"});
 
   return (
     <div className="container py-10">
