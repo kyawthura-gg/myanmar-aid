@@ -1,5 +1,10 @@
 import { z } from "zod"
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc"
+import {
+  adminProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "../trpc"
 
 const paymentMethodSchema = z.object({
   methodType: z.enum(["bank", "crypto", "mobilepayment", "link"]),
@@ -30,6 +35,42 @@ const campaignSchema = z.object({
 })
 
 export const campaignRouter = createTRPCRouter({
+  updateStatus: adminProcedure
+    .input(
+      z.object({
+        status: z.enum(["pending", "active", "rejected"]),
+        id: z.string().min(1),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.campaign.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          status: input.status,
+        },
+      })
+    }),
+  listForAdmin: adminProcedure
+    .input(
+      z.object({
+        status: z.enum(["pending", "active"]),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      return ctx.db.campaign.findMany({
+        where: {
+          status: input.status,
+        },
+        include: {
+          user: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      })
+    }),
   list: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.campaign.findMany({
       where: {

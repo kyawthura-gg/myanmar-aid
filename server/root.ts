@@ -3,6 +3,7 @@ import { campaignRouter } from "./routers/campaign"
 import { postRouter } from "./routers/post"
 import { uploadRouter } from "./routers/upload"
 import { userRouter } from "./routers/user"
+import { donationRouter } from "./routers/donation"
 
 /**
  * This is the primary router for your server.
@@ -14,6 +15,7 @@ export const appRouter = createTRPCRouter({
   user: userRouter,
   campaign: campaignRouter,
   upload: uploadRouter,
+  donation: donationRouter
 })
 
 // export type definition of API
