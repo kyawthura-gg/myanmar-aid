@@ -17,6 +17,10 @@ export const { signIn, signUp, signOut, useSession, updateUser } =
             type: "boolean",
             required: false,
           },
+          isAdmin: {
+            type: "boolean",
+            required: false,
+          },
         },
       }),
     ],

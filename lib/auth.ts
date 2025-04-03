@@ -31,6 +31,10 @@ export const getAuth = (db: D1Database) => {
           type: "boolean",
           required: false,
         },
+        isAdmin: {
+          type: "boolean",
+          required: false,
+        },
       },
     },
   })

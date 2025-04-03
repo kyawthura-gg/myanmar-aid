@@ -1,4 +1,4 @@
-'use client';
+"use client"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -21,140 +21,57 @@ import {
 } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
-import { api } from "@/trpc/react";
+import { api } from "@/trpc/react"
 import { CheckCircle, Clock, Search, ShieldAlert, User } from "lucide-react"
 import Link from "next/link"
-import { useEffect, useState } from "react"
-
-// Mock data for pending verifications
-// const pendingVerifications = [
-//   {
-//     id: "v1",
-//     name: "Kyaw Kyaw",
-//     location: "Yangon",
-//     submittedAt: "2025-03-28T14:30:00Z",
-//     type: "Family Registration",
-//     status: "pending",
-//   },
-//   {
-//     id: "v2",
-//     name: "Ma Hla",
-//     location: "Mandalay",
-//     submittedAt: "2025-03-28T10:15:00Z",
-//     type: "Family Registration",
-//     status: "pending",
-//   },
-//   {
-//     id: "v3",
-//     name: "U Aung",
-//     location: "Bago",
-//     submittedAt: "2025-03-27T16:45:00Z",
-//     type: "Donation Confirmation",
-//     status: "pending",
-//   },
-// ]
-
-// // Mock data for donation verifications
-// const donationVerifications = [
-//   {
-//     id: "d1",
-//     donor: "John Smith",
-//     recipient: "Kyaw Family",
-//     amount: 150,
-//     date: "2025-03-28T09:20:00Z",
-//     status: "pending",
-//   },
-//   {
-//     id: "d2",
-//     donor: "Sarah Johnson",
-//     recipient: "Min Family",
-//     amount: 200,
-//     date: "2025-03-27T14:10:00Z",
-//     status: "pending",
-//   },
-// ]
+import { useState } from "react"
 
 export default function AdminPage() {
-  const [adminNotes , setAdminNotes] = useState("");
-  const [donationVerificationStatus, setDonationVerificationStatus] = useState<any>("pending")
-  const [recipientConfirmationStatus, setRecipientConfirmationStatus] = useState<string>("pending")
-  const [verification, setVerfication] = useState<any>();
-  const [donations, setDonations] = useState<any>();
-  const [selectedDonation, setSelectedDonation] = useState<any>(null);
-    const [selectedVerification, setSelectedVerification] = useState<
-    any
-  >(null)
-  const { data: campaigns, error , refetch} = api.campaign.campaignForAdmin.useQuery({ status: "pending" })
-  const updateCampaignMutation = api.campaign.updateCampaignStatus.useMutation();
-  const { data: donation , refetch: refetchDonation} = api.donation.donationForAdmin.useQuery({ status: "pending" })
-  const updateDonationMutation = api.donation.updateDonationStatus.useMutation();
+  const [adminNotes, setAdminNotes] = useState("")
+  const [donationVerificationStatus, setDonationVerificationStatus] =
+    useState<any>("pending")
+  const [selectedDonation, setSelectedDonation] = useState<any>(null)
+  const [selectedVerification, setSelectedVerification] = useState<any>(null)
+  const { data: campaigns, refetch } = api.campaign.listForAdmin.useQuery({
+    status: "pending",
+  })
+  const updateCampaignMutation = api.campaign.updateStatus.useMutation()
+  const { data: donation, refetch: refetchDonation } =
+    api.donation.donationForAdmin.useQuery({ status: "pending" })
+  const updateDonationMutation = api.donation.updateDonationStatus.useMutation()
 
-
-  async function handleApprove() {
-      await updateCampaignMutation.mutateAsync({
-        status: "active",
-        id: selectedVerification.id
+  async function handleUpdateStatus(status: "active" | "rejected") {
+    await updateCampaignMutation.mutateAsync({
+      status,
+      id: selectedVerification.id,
     })
-    refetch();
-  }
-  async function handleReject() {
-      await updateCampaignMutation.mutateAsync({
-        status: "rejected",
-        id: selectedVerification.id
-    })
-    refetch();
+    refetch()
   }
 
-  async function handleUpdateDonationMutation(){
-      await updateDonationMutation.mutateAsync({
-        status: donationVerificationStatus,
-        id: selectedDonation.id,
-        adminNote: adminNotes,
+  async function handleUpdateDonationMutation() {
+    await updateDonationMutation.mutateAsync({
+      status: donationVerificationStatus,
+      id: selectedDonation.id,
+      adminNote: adminNotes,
     })
-    refetchDonation();
-    setSelectedDonation(null);
+    refetchDonation()
+    setSelectedDonation(null)
   }
 
-  async function handleFlagAsSuspicious(){
-      await updateDonationMutation.mutateAsync({
-        status: "rejected",
-        id: selectedDonation.id,
-        adminNote: adminNotes,
+  async function handleFlagAsSuspicious() {
+    await updateDonationMutation.mutateAsync({
+      status: "rejected",
+      id: selectedDonation.id,
+      adminNote: adminNotes,
     })
-    refetchDonation();
-    setSelectedDonation(null);
+    refetchDonation()
+    setSelectedDonation(null)
   }
-
-  // useEffect(() => {
-  //   if (campaigns) {
-  //     setVerfication(campaigns);
-  //     setSelectedVerification(null);
-  //   }
-  //   if(donation){
-  //     setDonations(donation);
-  //     setSelectedDonation(null);
-  //   }
-  // }, [campaigns])
-
   const [searchTerm, setSearchTerm] = useState("")
 
-
-  // const filteredVerifications = pendingVerifications.filter(
-  //   (verification) =>
-  //     verification.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     verification.location.toLowerCase().includes(searchTerm.toLowerCase())
-  // )
-
-  const handleAdminVerificationChange = (value: any)=> {
-    setDonationVerificationStatus(value);
+  const handleAdminVerificationChange = (value: any) => {
+    setDonationVerificationStatus(value)
   }
-  const handleRecipientConfirmationChange = (value: any)=> {
-    setRecipientConfirmationStatus(value);
-  }
-
-  // const selectedDonationData = donationVerifications.find(
-  //   (d) => d.id === selectedDonation
-  // )
 
   return (
     <div className="container py-10">
@@ -193,7 +110,7 @@ export default function AdminPage() {
               <div className="border rounded-md">
                 {campaigns ? (
                   <div className="divide-y">
-                    {campaigns.map((verification : any) => (
+                    {campaigns.map((verification: any) => (
                       <div
                         key={verification.id}
                         className={`p-3 cursor-pointer hover:bg-muted ${selectedVerification === verification.id ? "bg-muted" : ""}`}
@@ -338,17 +255,22 @@ export default function AdminPage() {
                   </CardContent>
                   <CardFooter className="flex justify-between">
                     <div className="flex gap-2">
-                      <Button onClick={()=> {
-                        handleReject();
-                      }} variant="destructive">
+                      <Button
+                        onClick={() => {
+                          handleUpdateStatus("rejected")
+                        }}
+                        variant="destructive"
+                      >
                         <ShieldAlert className="h-4 w-4 mr-2" />
                         Reject
                       </Button>
                       <Button variant="outline">Request More Info</Button>
                     </div>
-                    <Button onClick={()=> {
-                      handleApprove();
-                    }}>
+                    <Button
+                      onClick={() => {
+                        handleUpdateStatus("active")
+                      }}
+                    >
                       <CheckCircle className="h-4 w-4 mr-2" />
                       Approve
                     </Button>
@@ -385,40 +307,41 @@ export default function AdminPage() {
 
               <div className="border rounded-md">
                 <div className="divide-y">
-                  { donation ? 
-                  donation.map((donation: any) => (
-                    <div
-                      key={donation.id}
-                      className={`p-3 cursor-pointer hover:bg-muted ${selectedDonation === donation.id ? "bg-muted" : ""}`}
-                      onClick={() => setSelectedDonation(donation)}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <div className="font-medium">
-                            ${donation.amount} Donation
+                  {donation
+                    ? donation.map((donation: any) => (
+                        <div
+                          key={donation.id}
+                          className={`p-3 cursor-pointer hover:bg-muted ${selectedDonation === donation.id ? "bg-muted" : ""}`}
+                          onClick={() => setSelectedDonation(donation)}
+                        >
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <div className="font-medium">
+                                ${donation.amount} Donation
+                              </div>
+                              <div className="text-sm text-muted-foreground">
+                                To: {donation.campaign.title}
+                              </div>
+                            </div>
+                            <Badge
+                              variant="outline"
+                              className="flex items-center gap-1"
+                            >
+                              <Clock className="h-3 w-3" />
+                              <span>{donation.status}</span>
+                            </Badge>
                           </div>
-                          <div className="text-sm text-muted-foreground">
-                            To: {donation.campaign.title}
+                          <div className="flex justify-between items-center mt-2 text-xs text-muted-foreground">
+                            <span>From: {donation.donorName}</span>
+                            <span>
+                              {new Date(
+                                donation.donatedAt
+                              ).toLocaleDateString()}
+                            </span>
                           </div>
                         </div>
-                        <Badge
-                          variant="outline"
-                          className="flex items-center gap-1"
-                        >
-                          <Clock className="h-3 w-3" />
-                          <span>{donation.status}</span>
-                        </Badge>
-                      </div>
-                      <div className="flex justify-between items-center mt-2 text-xs text-muted-foreground">
-                        <span>From: {donation.donorName}</span>
-                        <span>
-                          {new Date(donation.donatedAt).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-                  ))
-                  : <></>
-                }
+                      ))
+                    : null}
                 </div>
               </div>
             </div>
@@ -518,7 +441,10 @@ export default function AdminPage() {
                           <Label htmlFor="admin-verified">
                             Admin Verification:
                           </Label>
-                          <Select value={donationVerificationStatus} onValueChange={handleAdminVerificationChange}>
+                          <Select
+                            value={donationVerificationStatus}
+                            onValueChange={handleAdminVerificationChange}
+                          >
                             <SelectTrigger
                               id="admin-verified"
                               className="w-[180px]"
@@ -559,7 +485,7 @@ export default function AdminPage() {
                     <div>
                       <h3 className="text-sm font-medium mb-2">Admin Notes</h3>
                       <Textarea
-                        onChange={(e: any)=> setAdminNotes(e.target.value)}
+                        onChange={(e: any) => setAdminNotes(e.target.value)}
                         value={adminNotes}
                         placeholder="Add verification notes here..."
                         className="min-h-[100px]"
@@ -568,7 +494,10 @@ export default function AdminPage() {
                   </CardContent>
                   <CardFooter className="flex justify-between">
                     <div className="flex gap-2">
-                      <Button onClick={handleFlagAsSuspicious} variant="destructive">
+                      <Button
+                        onClick={handleFlagAsSuspicious}
+                        variant="destructive"
+                      >
                         <ShieldAlert className="h-4 w-4 mr-2" />
                         Flag as Suspicious
                       </Button>
