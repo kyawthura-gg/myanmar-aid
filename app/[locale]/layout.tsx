@@ -52,7 +52,7 @@ export default async function RootLayout({
             <SiteFooter />
           </NextIntlClientProvider>
         </TRPCReactProvider>
-        <Toaster />
+        <Toaster richColors />
       </body>
     </html>
   )
