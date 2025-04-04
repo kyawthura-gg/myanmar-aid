@@ -14,7 +14,7 @@ export const { signIn, signUp, signOut, useSession, updateUser } =
             required: false,
           },
           onboardingCompleted: {
-            type: "boolean",
+            type: "string",
             required: false,
           },
           isAdmin: {

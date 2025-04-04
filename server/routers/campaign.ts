@@ -23,6 +23,8 @@ const paymentMethodSchema = z.object({
 const campaignSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
+  regionCode: z.string().min(2, "Invalid region"),
+  townshipCode: z.string().min(2, "Invalid township"),
   photos: z
     .array(z.string())
     .min(1)
@@ -84,10 +86,19 @@ export const campaignRouter = createTRPCRouter({
   create: protectedProcedure
     .input(campaignSchema)
     .mutation(async ({ ctx, input }) => {
+      const currentUser = await ctx.db.user.findUniqueOrThrow({
+        where: {
+          id: ctx.session.user.id,
+        },
+      })
+      if (!currentUser?.accountType) {
+        throw new Error("Account type not found")
+      }
       return ctx.db.campaign.create({
         data: {
           ...input,
-          status: "pending",
+          accountType: currentUser?.accountType,
+          status: currentUser.status ?? "pending",
           userId: ctx.session.user.id,
           payments: {
             create: input.payments,

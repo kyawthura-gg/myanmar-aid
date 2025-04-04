@@ -31,6 +31,12 @@ export const getAuth = (db: D1Database) => {
           type: "boolean",
           required: false,
         },
+        status: {
+          type: "string",
+          enum: ["pending", "active", "rejected"],
+          default: "pending",
+          required: false,
+        },
         isAdmin: {
           type: "boolean",
           required: false,

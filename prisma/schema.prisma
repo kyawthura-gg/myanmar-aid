@@ -91,19 +91,27 @@ model Verification {
 // --- end of better-auth tables ---
 
 model Campaign {
-  id          String   @id @default(cuid())
-  title       String
-  description String
-  photos      String // stringify array of image URLs
-  status      String // "pending", "active", "rejected"
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
+  id           String   @id @default(cuid())
+  title        String
+  description  String
+  accountType  String //  "individual" or "org"
+  regionCode   String
+  townshipCode String
+  photos       String // stringify array of image URLs
+  status       String // "pending", "active", "rejected"
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
 
   // Relations
   userId    String
   user      User              @relation(fields: [userId], references: [id])
+  region    Region            @relation(fields: [regionCode], references: [regionCode])
+  township  Township          @relation(fields: [townshipCode], references: [townshipCode])
   payments  CampaignBanking[]
   donations Donation[]
+
+  @@index([regionCode])
+  @@index([townshipCode])
 }
 
 model CampaignBanking {
@@ -155,4 +163,34 @@ model Donation {
 
   @@index([status])
   @@index([campaignId])
+}
+
+model Region {
+  id         String     @id @default(cuid())
+  regionCode String     @unique
+  nameEn     String // English name
+  nameMm     String // Myanmar name
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  townships  Township[]
+  campaigns  Campaign[]
+
+  @@index([regionCode])
+}
+
+model Township {
+  id           String   @id @default(cuid())
+  townshipCode String   @unique
+  nameEn       String // English name
+  nameMm       String // Myanmar name
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  regionCode String
+  region     Region     @relation(fields: [regionCode], references: [regionCode])
+  campaigns  Campaign[]
+
+  @@index([townshipCode])
+  @@index([regionCode])
 }
