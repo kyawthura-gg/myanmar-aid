@@ -1,27 +1,5 @@
 "use client"
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import {
-  BitcoinIcon,
-  Building2Icon,
-  CheckCircle2Icon,
-  ImageIcon,
-  LinkIcon,
-  MapPinIcon,
-  PencilIcon,
-  PlusIcon,
-  RocketIcon,
-  SmartphoneIcon,
-  TagsIcon,
-  TrashIcon,
-  WalletIcon,
-  XIcon,
-} from "lucide-react"
-import { useParams, useRouter } from "next/navigation"
-import { useFieldArray, useForm } from "react-hook-form"
-import { toast } from "sonner"
-import { z } from "zod"
-
 import { Button } from "@/components/ui/button"
 import { CountryDropdown } from "@/components/ui/country-dropdown"
 import {
@@ -52,43 +30,32 @@ import states from "@/lib/location/states.json"
 import townships from "@/lib/location/townships.json"
 import { getStorageFullURL } from "@/lib/utils"
 import { api } from "@/trpc/react"
+import { zodResolver } from "@hookform/resolvers/zod"
+import {
+  BitcoinIcon,
+  Building2Icon,
+  CheckCircle2Icon,
+  ImageIcon,
+  LinkIcon,
+  MapPinIcon,
+  PencilIcon,
+  PlusIcon,
+  RocketIcon,
+  SmartphoneIcon,
+  TagsIcon,
+  TrashIcon,
+  WalletIcon,
+  XIcon,
+} from "lucide-react"
 import mime from "mime-types"
+import { useParams, useRouter } from "next/navigation"
 import { useMemo } from "react"
-
-const formSchema = z.object({
-  title: z
-    .string()
-    .min(3, "Title must be at least 3 characters")
-    .max(100, "Title must be less than 100 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  regionCode: z.string().min(2, "Invalid region"),
-  townshipCode: z.string().min(2, "Invalid township"),
-  photos: z
-    .array(z.union([z.instanceof(File), z.string()]))
-    .min(1, "At least one photo is required")
-    .max(6, "Maximum 6 photos allowed"),
-  categories: z.string().array().min(1, "At least one category is required"),
-  payments: z
-    .array(
-      z.object({
-        methodType: z.enum(["bank", "crypto", "mobilepayment", "link"]),
-        country: z.string({
-          required_error: "Please select a country",
-        }),
-        accountName: z.string().optional(),
-        accountNumber: z.string().optional(),
-        cryptoAddress: z.string().optional(),
-        mobileNumber: z.string().optional(),
-        accountBankName: z.string().optional(),
-        mobileProvider: z.string().optional(),
-        link: z.string().optional(),
-      })
-    )
-    .min(1, "At least one payment method is required"),
-})
-
+import { useFieldArray, useForm } from "react-hook-form"
+import { toast } from "sonner"
+import { type CampaignFormValues, campaignFormSchema } from "./campaign-schema"
+import { ContactMethodsForm } from "./contact-methods"
 interface CampaignFormProps {
-  defaultValues?: Partial<z.infer<typeof formSchema>>
+  defaultValues?: Partial<CampaignFormValues>
 }
 
 export function CampaignForm({ defaultValues }: CampaignFormProps) {
@@ -98,8 +65,8 @@ export function CampaignForm({ defaultValues }: CampaignFormProps) {
   const createMutation = api.campaign.upsert.useMutation()
   const uploadMutation = api.upload.getSignedURLS.useMutation()
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<CampaignFormValues>({
+    resolver: zodResolver(campaignFormSchema),
     defaultValues,
   })
 
@@ -119,7 +86,7 @@ export function CampaignForm({ defaultValues }: CampaignFormProps) {
     )
   }, [selectedRegionCode])
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: CampaignFormValues) {
     try {
       const newPhotos = values.photos.filter(
         (photo): photo is File => photo instanceof File
@@ -313,7 +280,7 @@ export function CampaignForm({ defaultValues }: CampaignFormProps) {
                         //@ts-expect-error
                         form.setValue("townshipCode", undefined)
                       }}
-                      defaultValue={field.value}
+                      defaultValue={defaultValues?.regionCode}
                       placeholder="Select state/region"
                     />
                   </FormControl>
@@ -340,6 +307,7 @@ export function CampaignForm({ defaultValues }: CampaignFormProps) {
                           : "Please select state/region first"
                       }
                       disabled={!form.watch("regionCode")}
+                      defaultValue={defaultValues?.townshipCode}
                     />
                   </FormControl>
                   <FormMessage />
@@ -458,6 +426,7 @@ export function CampaignForm({ defaultValues }: CampaignFormProps) {
             </FormItem>
           )}
         />
+        <ContactMethodsForm />
 
         <div className="space-y-6 p-2.5 md:p-4 border rounded-lg bg-muted/30">
           <div className="flex items-center justify-between">

@@ -1,3 +1,7 @@
+import {
+  campaignServerSchema,
+  type contactTypeList,
+} from "@/app/[locale]/account/campaigns/campaign-schema"
 import { nanoid } from "nanoid"
 import { z } from "zod"
 import {
@@ -6,38 +10,6 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "../trpc"
-
-const paymentMethodSchema = z.object({
-  methodType: z.enum(["bank", "crypto", "mobilepayment", "link"]),
-  country: z.string({
-    required_error: "Please select a country",
-  }),
-  accountName: z.string().nullish(),
-  accountNumber: z.string().nullish(),
-  cryptoAddress: z.string().nullish(),
-  mobileNumber: z.string().nullish(),
-  accountBankName: z.string().nullish(),
-  mobileProvider: z.string().nullish(),
-  link: z.string().nullish(),
-})
-
-const campaignSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  regionCode: z.string().min(2, "Invalid region"),
-  townshipCode: z.string().min(2, "Invalid township"),
-  photos: z
-    .array(z.string())
-    .min(1)
-    .transform((photos) => JSON.stringify(photos)),
-  categories: z
-    .array(z.string())
-    .min(1, "At least one category is required")
-    .transform((categories) => JSON.stringify(categories)),
-  payments: z
-    .array(paymentMethodSchema)
-    .min(1, "At least one payment method is required"),
-})
 
 export const campaignRouter = createTRPCRouter({
   updateStatus: adminProcedure
@@ -90,7 +62,7 @@ export const campaignRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string().optional(),
-        ...campaignSchema.shape,
+        ...campaignServerSchema.shape,
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -170,6 +142,10 @@ export const campaignRouter = createTRPCRouter({
       ...data,
       photos: parseStringToArray(data?.photos),
       categories: parseStringToArray(data?.categories),
+      contactMethods: parseStringToArray<{
+        type: ContactTypeListType
+        value: string
+      }>(data?.contactMethods),
     }
   }),
   getActiveById: publicProcedure
@@ -186,28 +162,38 @@ export const campaignRouter = createTRPCRouter({
             select: {
               name: true,
               image: true,
-              facebookLink: true,
+              // facebookLink: true,
               phone: true,
-              viberPhoneNumber: true,
-              whatsappPhoneNumber: true,
+              // viberPhoneNumber: true,
+              // whatsappPhoneNumber: true,
             },
           },
+          region: true,
+          township: true,
+          donations: true,
         },
       })
 
       return {
         ...data,
         photos: parseStringToArray(data?.photos),
+        categories: parseStringToArray(data?.categories),
+        contactMethods: parseStringToArray<{
+          type: ContactTypeListType
+          value: string
+        }>(data?.contactMethods),
       }
     }),
 })
 
-function parseStringToArray(photos?: string): string[] {
-  if (!photos) {
+type ContactTypeListType = (typeof contactTypeList)[number]
+
+function parseStringToArray<T = string>(jsonString?: string): T[] {
+  if (!jsonString) {
     return []
   }
   try {
-    return JSON.parse(photos)
+    return JSON.parse(jsonString)
   } catch {
     return []
   }

@@ -33,6 +33,7 @@ export default function CreateCampaignPage() {
               defaultValues={{
                 photos: [],
                 payments: [{ methodType: "bank", country: "Myanmar" }],
+                contactMethods: [{ type: "facebook", value: "" }],
               }}
             />
           </CardContent>

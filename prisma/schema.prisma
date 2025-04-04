@@ -24,9 +24,7 @@ model User {
   emailVerified       Boolean
   image               String?
   phone               String? // Optional for campaign creators
-  facebookLink        String? // For user, verification, TODO change to socialLink
-  viberPhoneNumber    String?
-  whatsappPhoneNumber String?
+  socialLink          String? // For user, verification, TODO change to socialLink
   verificationPhoto   String? // For user, verification
   isAdmin             Boolean    @default(false)
   accountType         String     @default("individual") // Only "individual" or "org"
@@ -91,17 +89,18 @@ model Verification {
 // --- end of better-auth tables ---
 
 model Campaign {
-  id           String   @id @default(cuid())
-  title        String
-  description  String
-  accountType  String //  "individual" or "org" this is automatically set to user's accountType when isAdmin is false
-  regionCode   String
-  townshipCode String
-  photos       String // stringify array of image URLs
-  categories   String // stringify array of categories
-  status       String // "pending", "active", "rejected"
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now())
+  id             String   @id @default(cuid())
+  title          String
+  description    String
+  accountType    String //  "individual" or "org" this is automatically set to user's accountType when isAdmin is false
+  regionCode     String
+  townshipCode   String
+  photos         String // stringify array of image URLs
+  categories     String // stringify array of categories
+  contactMethods String // stringify array of type, value. type: "phone" | "viber" | "facebook" | "instagram" | "tiktok" | "whatsapp" | "telegram"
+  status         String // "pending", "active", "rejected"
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now())
 
   // Relations
   userId    String

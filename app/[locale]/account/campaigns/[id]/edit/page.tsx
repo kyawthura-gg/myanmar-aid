@@ -49,6 +49,7 @@ export default async function EditCampaignPage({
                 townshipCode: campaign.townshipCode,
                 photos: campaign.photos,
                 categories: campaign.categories,
+                contactMethods: campaign.contactMethods,
                 payments: campaign.payments.map((payment) => ({
                   methodType: payment.link
                     ? "link"

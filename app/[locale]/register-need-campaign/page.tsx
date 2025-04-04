@@ -60,10 +60,8 @@ const step2Schema = z.object({
     required_error: "Please select an account type",
   }),
   name: z.string().min(2, "Name must be at least 2 characters"),
-  facebookLink: z.string().url("Please enter a valid URL"),
+  socialLink: z.string().url("Please enter a valid URL"),
   phoneNumber: phoneValidation,
-  viberPhoneNumber: phoneValidation,
-  whatsappPhoneNumber: phoneValidation,
   termsAccepted: z.boolean().refine((val) => val === true, {
     message: "You must accept the terms and conditions",
   }),
@@ -90,9 +88,7 @@ export default function RegisterFamilyPage() {
       accountType: undefined,
       name: "",
       phoneNumber: "",
-      facebookLink: "",
-      viberPhoneNumber: "",
-      whatsappPhoneNumber: "",
+      socialLink: "",
       termsAccepted: false,
     },
   })
@@ -127,293 +123,257 @@ export default function RegisterFamilyPage() {
   }
 
   return (
-    <div className="container-wrapper max-w-3xl py-10">
-      <Link
-        href="/"
-        className="flex items-center gap-2 text-sm mb-6 hover:underline"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to home
-      </Link>
+    <div className="container-wrapper py-10">
+      <div className="max-w-3xl mx-auto">
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-sm mb-6 hover:underline"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to home
+        </Link>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Register to request need campaign</CardTitle>
-          <CardDescription>
-            Please provide your details to help donors understand your needs.
-            Open to both individuals and organizations. All information will be
-            verified.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="mb-6">
-            <div className="flex justify-between mb-2">
-              {[1, 2].map((i) => (
+        <Card>
+          <CardHeader>
+            <CardTitle>Register to request need campaign</CardTitle>
+            <CardDescription>
+              Please provide your details to help donors understand your needs.
+              Open to both individuals and organizations. All information will
+              be verified.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-6">
+              <div className="flex justify-between mb-2">
+                {[1, 2].map((i) => (
+                  <div
+                    key={i}
+                    className={`flex items-center justify-center w-8 h-8 rounded-full ${
+                      step >= i
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {i}
+                  </div>
+                ))}
+              </div>
+              <div className="w-full bg-muted h-2 rounded-full">
                 <div
-                  key={i}
-                  className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                    step >= i
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  {i}
-                </div>
-              ))}
+                  className="bg-primary h-2 rounded-full transition-all"
+                  style={{ width: `${(step / 2) * 100}%` }}
+                />
+              </div>
             </div>
-            <div className="w-full bg-muted h-2 rounded-full">
-              <div
-                className="bg-primary h-2 rounded-full transition-all"
-                style={{ width: `${(step / 2) * 100}%` }}
-              />
-            </div>
-          </div>
 
-          <div>
-            {step === 1 && (
-              <Form {...step1Form}>
-                <form
-                  onSubmit={step1Form.handleSubmit(onStep1Submit)}
-                  className="space-y-4"
-                >
-                  <FormField
-                    control={step1Form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input placeholder="m@example.com" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={step1Form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                          <Input type="password" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={step1Form.control}
-                    name="confirmPassword"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Confirm Password</FormLabel>
-                        <FormControl>
-                          <Input type="password" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="flex justify-center">
-                    <Button
-                      loading={step1Form.formState.isSubmitting}
-                      type="submit"
-                      className="max-w-[300px] w-full"
-                    >
-                      Sign Up & Continue
-                    </Button>
-                  </div>
-                </form>
-              </Form>
-            )}
-
-            {step === 2 && (
-              <Form {...step2Form}>
-                <form
-                  onSubmit={step2Form.handleSubmit(onStep2Submit)}
-                  className="space-y-4"
-                >
-                  <FormField
-                    control={step2Form.control}
-                    name="accountType"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Account Type</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
+            <div>
+              {step === 1 && (
+                <Form {...step1Form}>
+                  <form
+                    onSubmit={step1Form.handleSubmit(onStep1Submit)}
+                    className="space-y-4"
+                  >
+                    <FormField
+                      control={step1Form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select account type" />
-                            </SelectTrigger>
+                            <Input placeholder="m@example.com" {...field} />
                           </FormControl>
-                          <SelectContent>
-                            <SelectItem value="individual">
-                              Individual
-                            </SelectItem>
-                            <SelectItem value="org">Organization</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={step2Form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Your name or organization name"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={step2Form.control}
-                    name="facebookLink"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Social Media Profile Link</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="url"
-                            placeholder="https://facebook.com/your.profile"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                        <p className="text-xs text-muted-foreground">
-                          This will be used by our system to verify your
-                          identity. Make sure to enter a publicly accessible
-                          profile link.
-                        </p>
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="grid gap-2">
-                    <FormLabel>Profile Image (Optional)</FormLabel>
-                    <Input
-                      id="image"
-                      name="image"
-                      type="file"
-                      accept="image/*"
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  </div>
 
-                  <FormField
-                    control={step2Form.control}
-                    name="phoneNumber"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Phone Number (Optional)</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="tel"
-                            placeholder="+959xxxxxxxxx"
-                            {...field}
-                            value={field.value ?? ""}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={step2Form.control}
-                    name="viberPhoneNumber"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Viber Phone Number (Optional)</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="tel"
-                            placeholder="+959xxxxxxxxx"
-                            {...field}
-                            value={field.value ?? ""}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={step2Form.control}
-                    name="whatsappPhoneNumber"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Whatsapp Phone Number (Optional)</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="tel"
-                            placeholder="+959xxxxxxxxx"
-                            {...field}
-                            value={field.value ?? ""}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={step2Form.control}
-                    name="termsAccepted"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex flex-row items-start space-x-2 pt-4">
+                    <FormField
+                      control={step1Form.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Password</FormLabel>
                           <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
+                            <Input type="password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={step1Form.control}
+                      name="confirmPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Confirm Password</FormLabel>
+                          <FormControl>
+                            <Input type="password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="flex justify-center">
+                      <Button
+                        loading={step1Form.formState.isSubmitting}
+                        type="submit"
+                        className="max-w-[300px] w-full"
+                      >
+                        Sign Up & Continue
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              )}
+
+              {step === 2 && (
+                <Form {...step2Form}>
+                  <form
+                    onSubmit={step2Form.handleSubmit(onStep2Submit)}
+                    className="space-y-4"
+                  >
+                    <FormField
+                      control={step2Form.control}
+                      name="accountType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Account Type</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select account type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="individual">
+                                Individual
+                              </SelectItem>
+                              <SelectItem value="org">Organization</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={step2Form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Your name or organization name"
+                              {...field}
                             />
                           </FormControl>
-                          <div className="grid gap-1.5 leading-none">
-                            <FormLabel className="text-sm font-medium leading-none">
-                              Accept terms and conditions
-                            </FormLabel>
-                            <p className="text-sm text-muted-foreground">
-                              I confirm that all information provided is
-                              accurate and I consent to the processing of my
-                              data.
-                            </p>
-                          </div>
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                  <div className="flex justify-center">
-                    <Button
-                      type="submit"
-                      className="max-w-[300px] w-full"
-                      loading={createMutation.isPending}
-                    >
-                      Submit Registration
-                    </Button>
-                  </div>
-                </form>
-              </Form>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+                    <FormField
+                      control={step2Form.control}
+                      name="socialLink"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Social Media Profile Link</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="url"
+                              placeholder="https://facebook.com/your.profile"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                          <p className="text-xs text-muted-foreground">
+                            This will be used by our system to verify your
+                            identity. Make sure to enter a publicly accessible
+                            profile link.
+                          </p>
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="grid gap-2">
+                      <FormLabel>Profile Image (Optional)</FormLabel>
+                      <Input
+                        id="image"
+                        name="image"
+                        type="file"
+                        accept="image/*"
+                      />
+                    </div>
+
+                    <FormField
+                      control={step2Form.control}
+                      name="phoneNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Phone Number (Optional)</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="tel"
+                              placeholder="+959xxxxxxxxx"
+                              {...field}
+                              value={field.value ?? ""}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={step2Form.control}
+                      name="termsAccepted"
+                      render={({ field }) => (
+                        <FormItem>
+                          <div className="flex flex-row items-start space-x-2 pt-4">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <div className="grid gap-1.5 leading-none">
+                              <FormLabel className="text-sm font-medium leading-none">
+                                Accept terms and conditions
+                              </FormLabel>
+                              <p className="text-sm text-muted-foreground">
+                                I confirm that all information provided is
+                                accurate and I consent to the processing of my
+                                data.
+                              </p>
+                            </div>
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="flex justify-center">
+                      <Button
+                        type="submit"
+                        className="max-w-[300px] w-full"
+                        loading={createMutation.isPending}
+                      >
+                        Submit Registration
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

@@ -12,11 +12,9 @@ export const userRouter = createTRPCRouter({
       z.object({
         name: z.string().min(1),
         accountType: z.enum(["individual", "org"]),
-        facebookLink: z.string().url(),
+        socialLink: z.string().url(),
         image: z.string().nullish(),
         phoneNumber: z.string().nullish(),
-        viberPhoneNumber: z.string().nullish(),
-        whatsappPhoneNumber: z.string().nullish(),
         termsAccepted: z.boolean(),
       })
     )
@@ -29,10 +27,8 @@ export const userRouter = createTRPCRouter({
         data: {
           name: input.name,
           accountType: input.accountType,
-          facebookLink: input.facebookLink,
+          socialLink: input.socialLink,
           phone: input.phoneNumber,
-          viberPhoneNumber: input.viberPhoneNumber,
-          whatsappPhoneNumber: input.whatsappPhoneNumber,
           image: input.image,
           status: "pending",
           onboardingCompleted: true,
