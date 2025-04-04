@@ -34,6 +34,7 @@ import { useParams } from "next/navigation"
 import { useState } from "react"
 
 import { useSafeBack } from "@/hooks/use-safe-back"
+import { getStorageFullURL } from "@/lib/utils"
 import { api } from "@/trpc/react"
 import Loading from "./loading"
 
@@ -58,7 +59,7 @@ export default function CampaignDonationPage() {
 
   if (!campaign) {
     return (
-      <div className="container py-20 text-center">
+      <div className="container-wrapper py-20 text-center">
         <h1 className="text-2xl font-bold mb-4">Campaign Not Found</h1>
         <p className="text-muted-foreground mb-6">
           The campaign you're looking for doesn't exist or has been removed.
@@ -72,7 +73,7 @@ export default function CampaignDonationPage() {
   }
 
   return (
-    <div className="container py-10">
+    <div className="container-wrapper py-10">
       <Button variant="link" onClick={() => safeBack("/")}>
         <ArrowLeft className="h-4 w-4" />
         Back to home
@@ -192,7 +193,7 @@ export default function CampaignDonationPage() {
                         className="rounded-lg overflow-hidden border"
                       >
                         <img
-                          src={photo}
+                          src={getStorageFullURL(photo)}
                           alt=""
                           className="w-full h-auto object-cover aspect-video"
                         />

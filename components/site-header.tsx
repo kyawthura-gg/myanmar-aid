@@ -36,8 +36,11 @@ export function SiteHeader() {
   }
   return (
     <header className="border-b">
-      <div className="container flex h-16 items-center justify-between py-4">
-        <Link href="/" className="flex items-center gap-2 font-bold text-xl">
+      <div className="container-wrapper flex h-16 items-center justify-between py-4 px-3">
+        <Link
+          href="/"
+          className="flex items-center gap-2 font-bold text-lg md:text-xl"
+        >
           <Heart className="h-6 w-6 text-primary" />
           <span>Myanmar Aid Connect</span>
         </Link>

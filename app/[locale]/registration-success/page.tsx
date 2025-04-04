@@ -12,7 +12,7 @@ import Link from "next/link"
 
 export default function RegistrationSuccessPage() {
   return (
-    <div className="container max-w-md py-20">
+    <div className="container-wrapper max-w-md py-20">
       <Card className="text-center">
         <CardHeader>
           <div className="flex justify-center mb-4">

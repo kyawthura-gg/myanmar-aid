@@ -83,7 +83,7 @@ const testimonials = [
 
 export default function TransparencyPage() {
   return (
-    <div className="container py-10">
+    <div className="container-wrapper py-10">
       <Link
         href="/"
         className="flex items-center gap-2 text-sm mb-6 hover:underline"

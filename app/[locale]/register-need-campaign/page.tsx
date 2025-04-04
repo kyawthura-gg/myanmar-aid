@@ -127,7 +127,7 @@ export default function RegisterFamilyPage() {
   }
 
   return (
-    <div className="container max-w-3xl py-10">
+    <div className="container-wrapper max-w-3xl py-10">
       <Link
         href="/"
         className="flex items-center gap-2 text-sm mb-6 hover:underline"

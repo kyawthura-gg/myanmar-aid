@@ -3,6 +3,7 @@
 import { Plus } from "lucide-react"
 import Link from "next/link"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -18,7 +19,7 @@ export default function CampaignsPage() {
   const { data: campaigns, isLoading } = api.campaign.list.useQuery()
 
   return (
-    <div className="container py-10">
+    <div className="container-wrapper py-10 min-h-[80dvh]">
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Your Campaigns</h1>
@@ -53,10 +54,27 @@ export default function CampaignsPage() {
           {campaigns.map((campaign) => (
             <Card key={campaign.id}>
               <CardHeader>
-                <CardTitle>{campaign.title}</CardTitle>
-                <CardDescription>
-                  Created on {new Date(campaign.createdAt).toLocaleDateString()}
-                </CardDescription>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <CardTitle>{campaign.title}</CardTitle>
+                    <CardDescription>
+                      Created on{" "}
+                      {new Date(campaign.createdAt).toLocaleDateString()}
+                    </CardDescription>
+                  </div>
+                  <Badge
+                    variant={
+                      campaign.status === "active"
+                        ? "default"
+                        : campaign.status === "rejected"
+                          ? "destructive"
+                          : "secondary"
+                    }
+                    className="capitalize"
+                  >
+                    {campaign.status}
+                  </Badge>
+                </div>
               </CardHeader>
               <CardContent>
                 <p className="line-clamp-3 text-muted-foreground">
