@@ -186,20 +186,18 @@ export default function CampaignDonationPage() {
             <TabsContent value="photos" className="mt-6">
               {campaign.photos ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {JSON.parse(campaign.photos).map(
-                    (photo: string, index: number) => (
-                      <div
-                        key={index}
-                        className="rounded-lg overflow-hidden border"
-                      >
-                        <img
-                          src={getStorageFullURL(photo)}
-                          alt=""
-                          className="w-full h-auto object-cover aspect-video"
-                        />
-                      </div>
-                    )
-                  )}
+                  {campaign.photos.map((photo: string, index: number) => (
+                    <div
+                      key={index}
+                      className="rounded-lg overflow-hidden border"
+                    >
+                      <img
+                        src={getStorageFullURL(photo)}
+                        alt=""
+                        className="w-full h-auto object-cover aspect-video"
+                      />
+                    </div>
+                  ))}
                 </div>
               ) : (
                 <div className="text-center py-12">

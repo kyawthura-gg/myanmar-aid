@@ -8,7 +8,7 @@ import {
 
 const paymentMethodSchema = z.object({
   methodType: z.enum(["bank", "crypto", "mobilepayment", "link"]),
-  country: z.string().default("MM"),
+  country: z.string(),
   accountName: z.string().optional(),
   accountNumber: z.string().optional(),
   cryptoAddress: z.string().optional(),
@@ -29,8 +29,6 @@ const campaignSchema = z.object({
     .array(z.string())
     .min(1)
     .transform((photos) => JSON.stringify(photos)),
-  facebookLink: z.string().url().optional(),
-  viberLink: z.string().optional(),
   payments: z
     .array(paymentMethodSchema)
     .min(1, "At least one payment method is required"),
@@ -83,8 +81,13 @@ export const campaignRouter = createTRPCRouter({
       },
     })
   }),
-  create: protectedProcedure
-    .input(campaignSchema)
+  upsert: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().optional(),
+        ...campaignSchema.shape,
+      })
+    )
     .mutation(async ({ ctx, input }) => {
       const currentUser = await ctx.db.user.findUniqueOrThrow({
         where: {
@@ -94,14 +97,27 @@ export const campaignRouter = createTRPCRouter({
       if (!currentUser?.accountType) {
         throw new Error("Account type not found")
       }
-      return ctx.db.campaign.create({
-        data: {
-          ...input,
+
+      const { id, payments, ...rest } = input
+
+      return ctx.db.campaign.upsert({
+        where: {
+          id: id ?? "create-new-id",
+        },
+        create: {
+          ...rest,
           accountType: currentUser?.accountType,
           status: currentUser.status ?? "pending",
           userId: ctx.session.user.id,
           payments: {
-            create: input.payments,
+            create: payments,
+          },
+        },
+        update: {
+          ...rest,
+          payments: {
+            deleteMany: {},
+            create: payments,
           },
         },
       })
@@ -135,10 +151,26 @@ export const campaignRouter = createTRPCRouter({
       photos: parsePhotos(campaign.photos),
     }))
   }),
+  getById: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
+    const data = await ctx.db.campaign.findUniqueOrThrow({
+      where: {
+        id: input,
+      },
+      include: {
+        payments: true,
+        region: true,
+        township: true,
+      },
+    })
+    return {
+      ...data,
+      photos: parsePhotos(data?.photos),
+    }
+  }),
   getActiveById: publicProcedure
     .input(z.string())
     .query(async ({ ctx, input }) => {
-      return ctx.db.campaign.findUnique({
+      const data = await ctx.db.campaign.findUniqueOrThrow({
         where: {
           id: input,
           status: "active",
@@ -157,10 +189,18 @@ export const campaignRouter = createTRPCRouter({
           },
         },
       })
+
+      return {
+        ...data,
+        photos: parsePhotos(data?.photos),
+      }
     }),
 })
 
-function parsePhotos(photos: string): string[] {
+function parsePhotos(photos?: string): string[] {
+  if (!photos) {
+    return []
+  }
   try {
     return JSON.parse(photos)
   } catch {
