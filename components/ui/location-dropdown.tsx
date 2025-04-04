@@ -133,6 +133,17 @@ const RegionDropdownComponent = (
     [onChange]
   )
 
+  useEffect(() => {
+    if (defaultValue) {
+      const initial = options.find(
+        (region) => region.regionCode === defaultValue
+      )
+      setSelected(initial)
+    } else {
+      setSelected(undefined)
+    }
+  }, [defaultValue, options])
+
   return (
     <DropdownUI
       open={open}
@@ -181,7 +192,7 @@ const TownshipDropdownComponent = (
   useEffect(() => {
     if (defaultValue) {
       const initial = options.find(
-        (township) => township.townshipNameEn === defaultValue
+        (township) => township.townshipCode === defaultValue
       )
       setSelected(initial)
     } else {
