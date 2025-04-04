@@ -1,0 +1,42 @@
+[
+  {
+    "value": "Shelter & Housing",
+    "label": "Shelter & Housing",
+    "description": "Safe places to stay and help fixing homes"
+  },
+  {
+    "value": "Food & Nutrition",
+    "label": "Food & Nutrition",
+    "description": "Food, clean water and cooking supplies"
+  },
+  {
+    "value": "Medical Assistance",
+    "label": "Medical Assistance",
+    "description": "Medical care, medicines and health supplies"
+  },
+  {
+    "value": "Family Support",
+    "label": "Family Support",
+    "description": "Help for children, elderly and orphans"
+  },
+  {
+    "value": "Livelihood Recovery",
+    "label": "Livelihood Recovery",
+    "description": "Support to restart work and farming"
+  },
+  {
+    "value": "Hygiene Essentials",
+    "label": "Hygiene Essentials",
+    "description": "Cleaning supplies, clothes and basic needs"
+  },
+  {
+    "value": "Utilities & Energy",
+    "label": "Utilities & Energy",
+    "description": "Power supply and phone connection help"
+  },
+  {
+    "value": "Emergency Aid",
+    "label": "Emergency Aid",
+    "description": "Urgent rescue operations and medical transport help"
+  }
+]

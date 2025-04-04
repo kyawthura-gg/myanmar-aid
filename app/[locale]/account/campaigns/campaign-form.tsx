@@ -12,6 +12,7 @@ import {
   PlusIcon,
   RocketIcon,
   SmartphoneIcon,
+  TagsIcon,
   TrashIcon,
   WalletIcon,
   XIcon,
@@ -37,6 +38,7 @@ import {
   RegionDropdown,
   TownshipDropdown,
 } from "@/components/ui/location-dropdown"
+import MultipleSelector from "@/components/ui/multi-select"
 import {
   Select,
   SelectContent,
@@ -45,6 +47,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import categoriesOptions from "@/lib/categories.json"
 import states from "@/lib/location/states.json"
 import townships from "@/lib/location/townships.json"
 import { getStorageFullURL } from "@/lib/utils"
@@ -64,8 +67,7 @@ const formSchema = z.object({
     .array(z.union([z.instanceof(File), z.string()]))
     .min(1, "At least one photo is required")
     .max(6, "Maximum 6 photos allowed"),
-  facebookLink: z.string().url().optional(),
-  viberLink: z.string().optional(),
+  categories: z.string().array().min(1, "At least one category is required"),
   payments: z
     .array(
       z.object({
@@ -77,9 +79,7 @@ const formSchema = z.object({
         accountNumber: z.string().optional(),
         cryptoAddress: z.string().optional(),
         mobileNumber: z.string().optional(),
-        iban: z.string().optional(),
-        swiftCode: z.string().optional(),
-        routingNumber: z.string().optional(),
+        accountBankName: z.string().optional(),
         mobileProvider: z.string().optional(),
         link: z.string().optional(),
       })
@@ -242,6 +242,50 @@ export function CampaignForm({ defaultValues }: CampaignFormProps) {
                     <p>Include relevant details about timing and urgency</p>
                   </div>
                 </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <div className="p-2.5 md:p-4 border rounded-lg bg-muted/30">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="flex items-center gap-2">
+              <TagsIcon className="h-5 w-5 text-muted-foreground" />
+              <h3 className="font-medium text-lg">Campaign Categories</h3>
+            </div>
+            <div className="text-xs px-2 py-1 rounded-full bg-muted">
+              Select 1-3 categories
+            </div>
+          </div>
+
+          <FormField
+            control={form.control}
+            name="categories"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <MultipleSelector
+                    value={
+                      field.value && field.value.length > 0
+                        ? categoriesOptions.filter((option) =>
+                            field.value?.includes(option.value)
+                          )
+                        : []
+                    }
+                    onChange={(v) =>
+                      field.onChange(v.map((option) => option.value))
+                    }
+                    defaultOptions={categoriesOptions}
+                    placeholder="Choose categories that best describe your campaign"
+                    emptyIndicator={
+                      <p className="text-center text-muted-foreground py-6">
+                        No matching categories found
+                      </p>
+                    }
+                    maxSelected={3}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -533,6 +577,22 @@ export function CampaignForm({ defaultValues }: CampaignFormProps) {
                   <div className="pt-4 border-t">
                     {fieldMethodType === "bank" && (
                       <div className="grid gap-4 md:grid-cols-2">
+                        <FormField
+                          control={form.control}
+                          name={`payments.${index}.accountBankName`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Bank Name</FormLabel>
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  placeholder="Enter bank name"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
                         <FormField
                           control={form.control}
                           name={`payments.${index}.accountName`}

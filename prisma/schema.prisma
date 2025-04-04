@@ -94,10 +94,11 @@ model Campaign {
   id           String   @id @default(cuid())
   title        String
   description  String
-  accountType  String //  "individual" or "org"
+  accountType  String //  "individual" or "org" this is automatically set to user's accountType when isAdmin is false
   regionCode   String
   townshipCode String
   photos       String // stringify array of image URLs
+  categories   String // stringify array of categories
   status       String // "pending", "active", "rejected"
   createdAt    DateTime @default(now())
   updatedAt    DateTime @default(now())
@@ -115,22 +116,19 @@ model Campaign {
 }
 
 model CampaignBanking {
-  id            String    @id @default(cuid())
-  methodType    String // "bank", "crypto", "mobilepayment", "link"
-  country       String    @default("Myanmar")
-  accountName   String?
-  accountNumber String?
-  cryptoAddress String?
-  mobileNumber  String?
-  isVerified    Boolean   @default(false)
-  createdAt     DateTime  @default(now())
+  id              String    @id @default(cuid())
+  methodType      String // "bank", "crypto", "mobilepayment", "link"
+  country         String    @default("Myanmar")
+  accountBankName String?
+  accountName     String?
+  accountNumber   String?
+  cryptoAddress   String?
+  mobileNumber    String?
+  isVerified      Boolean   @default(false)
+  createdAt       DateTime  @default(now())
   // Dual-linking: To both Campaign AND User
-  campaignId    String?
-  campaign      Campaign? @relation(fields: [campaignId], references: [id])
-  // For bank-specific fields
-  iban          String?
-  swiftCode     String?
-  routingNumber String?
+  campaignId      String?
+  campaign        Campaign? @relation(fields: [campaignId], references: [id])
 
   // For mobile money
   mobileProvider String?

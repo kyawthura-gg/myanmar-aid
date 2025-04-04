@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid"
 import { z } from "zod"
 import {
   adminProcedure,
@@ -8,16 +9,16 @@ import {
 
 const paymentMethodSchema = z.object({
   methodType: z.enum(["bank", "crypto", "mobilepayment", "link"]),
-  country: z.string(),
-  accountName: z.string().optional(),
-  accountNumber: z.string().optional(),
-  cryptoAddress: z.string().optional(),
-  mobileNumber: z.string().optional(),
-  iban: z.string().optional(),
-  swiftCode: z.string().optional(),
-  routingNumber: z.string().optional(),
-  mobileProvider: z.string().optional(),
-  link: z.string().optional(),
+  country: z.string({
+    required_error: "Please select a country",
+  }),
+  accountName: z.string().nullish(),
+  accountNumber: z.string().nullish(),
+  cryptoAddress: z.string().nullish(),
+  mobileNumber: z.string().nullish(),
+  accountBankName: z.string().nullish(),
+  mobileProvider: z.string().nullish(),
+  link: z.string().nullish(),
 })
 
 const campaignSchema = z.object({
@@ -29,6 +30,10 @@ const campaignSchema = z.object({
     .array(z.string())
     .min(1)
     .transform((photos) => JSON.stringify(photos)),
+  categories: z
+    .array(z.string())
+    .min(1, "At least one category is required")
+    .transform((categories) => JSON.stringify(categories)),
   payments: z
     .array(paymentMethodSchema)
     .min(1, "At least one payment method is required"),
@@ -99,10 +104,9 @@ export const campaignRouter = createTRPCRouter({
       }
 
       const { id, payments, ...rest } = input
-
       return ctx.db.campaign.upsert({
         where: {
-          id: id ?? "create-new-id",
+          id: id ?? nanoid(),
         },
         create: {
           ...rest,
@@ -148,7 +152,7 @@ export const campaignRouter = createTRPCRouter({
 
     return campaigns.map((campaign) => ({
       ...campaign,
-      photos: parsePhotos(campaign.photos),
+      photos: parseStringToArray(campaign.photos),
     }))
   }),
   getById: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
@@ -164,7 +168,8 @@ export const campaignRouter = createTRPCRouter({
     })
     return {
       ...data,
-      photos: parsePhotos(data?.photos),
+      photos: parseStringToArray(data?.photos),
+      categories: parseStringToArray(data?.categories),
     }
   }),
   getActiveById: publicProcedure
@@ -192,12 +197,12 @@ export const campaignRouter = createTRPCRouter({
 
       return {
         ...data,
-        photos: parsePhotos(data?.photos),
+        photos: parseStringToArray(data?.photos),
       }
     }),
 })
 
-function parsePhotos(photos?: string): string[] {
+function parseStringToArray(photos?: string): string[] {
   if (!photos) {
     return []
   }

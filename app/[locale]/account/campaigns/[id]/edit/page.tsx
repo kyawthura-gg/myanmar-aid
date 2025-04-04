@@ -48,6 +48,7 @@ export default async function EditCampaignPage({
                 regionCode: campaign.regionCode,
                 townshipCode: campaign.townshipCode,
                 photos: campaign.photos,
+                categories: campaign.categories,
                 payments: campaign.payments.map((payment) => ({
                   methodType: payment.link
                     ? "link"
@@ -61,11 +62,9 @@ export default async function EditCampaignPage({
                   country: payment.country,
                   cryptoAddress: payment.cryptoAddress ?? undefined,
                   mobileNumber: payment.mobileNumber ?? undefined,
-                  iban: payment.iban ?? undefined,
-                  swiftCode: payment.swiftCode ?? undefined,
-                  routingNumber: payment.routingNumber ?? undefined,
                   mobileProvider: payment.mobileProvider ?? undefined,
                   link: payment.link ?? undefined,
+                  accountBankName: payment.accountBankName ?? undefined,
                 })),
               }}
             />
