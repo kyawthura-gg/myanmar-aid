@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { signIn } from "@/lib/auth-client"
+import { signIn, getSession } from "@/lib/auth-client"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
@@ -32,9 +32,15 @@ export function LoginForm() {
           console.warn(error)
           toast.error(error.error.message)
         },
-        onSuccess: () => {
+        onSuccess: async () => {
+          const { data } = await getSession()
+          // Check if user is admin and redirect accordingly
+          const isAdmin = data?.user?.isAdmin
+          const redirectPath = isAdmin ? "/admin" : "/account/campaigns"
+          
           toast.success("You have been logged in!")
-          router.replace("/account/campaigns")
+          router.replace(redirectPath)
+
         },
       }
     )

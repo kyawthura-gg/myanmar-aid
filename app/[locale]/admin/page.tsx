@@ -27,17 +27,20 @@ import Link from "next/link"
 import { useState } from "react"
 
 export default function AdminPage() {
+  const [verificationsStatus, setVerificationStatus] = useState<any>("pending"); // this status is for to filter list of the api data
+  const [dontationStatus, setDonationStatus] = useState<any>("pending"); // this status is for to filter list of the api data
+
   const [adminNotes, setAdminNotes] = useState("")
   const [donationVerificationStatus, setDonationVerificationStatus] =
     useState<any>("pending")
   const [selectedDonation, setSelectedDonation] = useState<any>(null)
   const [selectedVerification, setSelectedVerification] = useState<any>(null)
   const { data: campaigns, refetch } = api.campaign.listForAdmin.useQuery({
-    status: "pending",
+    status: verificationsStatus,
   })
   const updateCampaignMutation = api.campaign.updateStatus.useMutation()
   const { data: donation, refetch: refetchDonation } =
-    api.donation.donationForAdmin.useQuery({ status: "pending" })
+    api.donation.donationForAdmin.useQuery({ status: dontationStatus })
   const updateDonationMutation = api.donation.updateDonationStatus.useMutation()
 
   async function handleUpdateStatus(status: "active" | "rejected") {
@@ -73,6 +76,14 @@ export default function AdminPage() {
     setDonationVerificationStatus(value)
   }
 
+  const handleVerificatoinStatusChange = (status: string)=> {
+    setVerificationStatus(status);
+  }
+
+  const handleDonationStatusChange = (status: string)=> {
+    setDonationStatus(status);
+  }
+
   return (
     <div className="container-wrapper py-10">
       <div className="flex items-center justify-between mb-6">
@@ -88,24 +99,45 @@ export default function AdminPage() {
       </div>
 
       <Tabs defaultValue="verifications" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="verifications">Pending Verifications</TabsTrigger>
-          <TabsTrigger value="donations">Donation Verifications</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="verifications">Campaign</TabsTrigger>
+          <TabsTrigger value="donations">Donations</TabsTrigger>
+          <TabsTrigger value="users">User</TabsTrigger>
         </TabsList>
-
+        
         <TabsContent value="verifications" className="mt-6">
           <div className="grid gap-6 md:grid-cols-3">
             <div className="md:col-span-1 space-y-4">
-              <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="search"
-                  placeholder="Search verifications..."
-                  className="pl-8"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+              <div className="flex items-center gap-[20px]">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="search"
+                    placeholder="Search verifications..."
+                    className="pl-8"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <Select
+                      value={verificationsStatus}
+                      onValueChange={handleVerificatoinStatusChange}
+                    >
+                      <SelectTrigger
+                        id="admin-verified"
+                        className="w-[180px]"
+                      >
+                        <SelectValue placeholder="Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All</SelectItem>
+                        <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="rejected">Rejected</SelectItem>
+                      </SelectContent>
+               </Select>
               </div>
+
 
               <div className="border rounded-md">
                 {campaigns ? (
@@ -296,14 +328,33 @@ export default function AdminPage() {
         <TabsContent value="donations" className="mt-6">
           <div className="grid gap-6 md:grid-cols-3">
             <div className="md:col-span-1 space-y-4">
-              <div className="relative">
+            <div className="flex items-center gap-[20px]">
+            <div className="relative flex-1">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="search"
                   placeholder="Search donations..."
                   className="pl-8"
                 />
-              </div>
+            </div>
+            <Select
+                    value={dontationStatus}
+                    onValueChange={handleDonationStatusChange}
+                  >
+                    <SelectTrigger
+                      id="admin-verified"
+                      className="w-[180px]"
+                    >
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="verified">Verified</SelectItem>
+                      <SelectItem value="rejected">Rejected</SelectItem>
+                    </SelectContent>
+            </Select>
+            </div>
+
 
               <div className="border rounded-md">
                 <div className="divide-y">

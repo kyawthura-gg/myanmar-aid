@@ -32,14 +32,19 @@ export const campaignRouter = createTRPCRouter({
   listForAdmin: adminProcedure
     .input(
       z.object({
-        status: z.enum(["pending", "active"]),
+        status: z.enum(["pending", "active", "rejected", "all"]),
       })
     )
     .query(async ({ ctx, input }) => {
+      let where = {}
+      if(input.status != "all") {
+        where = {
+          ...where,
+          status: input.status
+        }
+      }
       return ctx.db.campaign.findMany({
-        where: {
-          status: input.status,
-        },
+        where,
         include: {
           user: true,
         },
