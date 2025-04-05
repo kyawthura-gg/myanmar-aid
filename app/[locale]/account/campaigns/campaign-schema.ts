@@ -36,7 +36,7 @@ export const contactSchema = z
   })
 
 // Base schema shared between client and server
-const baseCampaignSchema = {
+export const baseCampaignSchema = {
   title: z
     .string()
     .min(3, "Title must be at least 3 characters")
@@ -51,14 +51,6 @@ const baseCampaignSchema = {
     .min(1, "At least one payment method is required"),
 }
 
-// Client-side schema (for forms)
-export const campaignFormSchema = z.object({
-  ...baseCampaignSchema,
-  photos: z
-    .array(z.union([z.instanceof(File), z.string()]))
-    .min(1, "At least one photo is required")
-    .max(6, "Maximum 6 photos allowed"),
-})
 
 export const campaignServerSchema = z.object({
   ...baseCampaignSchema,
@@ -75,5 +67,5 @@ export const campaignServerSchema = z.object({
   ),
 })
 
-export type CampaignFormValues = z.infer<typeof campaignFormSchema>
+// export type CampaignFormValues = z.infer<typeof campaignFormSchema>
 export type CampaignServerValues = z.infer<typeof campaignServerSchema>
