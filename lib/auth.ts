@@ -12,7 +12,7 @@ const getDB = (db: D1Database) => {
 
 export const getAuth = (db: D1Database) => {
   return betterAuth({
-    baseURL: process.env.NEXT_PUBLIC_APP_URL,
+    baseURL: process.env.BETTER_AUTH_URL,
     database: prismaAdapter(getDB(db), {
       provider: "sqlite",
     }),
