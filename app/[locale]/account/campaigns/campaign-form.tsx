@@ -127,7 +127,7 @@ export function CampaignForm({ defaultValues }: CampaignFormProps) {
         ...values,
         photos: [...existingPhotos, ...uploadedImages],
       })
-      toast.success("Campaign created successfully!")
+      toast.success(`Campaign ${id ? "updated" : "created successfully!"}`)
       router.push("/account/campaigns")
     } catch (error) {
       toast.error("Failed to create campaign")

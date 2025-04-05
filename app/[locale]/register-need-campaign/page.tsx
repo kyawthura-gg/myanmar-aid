@@ -123,17 +123,16 @@ export default function RegisterFamilyPage() {
   }
 
   return (
-    <div className="container-wrapper py-10">
+    <div className="container-wrapper py-3 md:py-10">
       <div className="max-w-3xl mx-auto">
-        <Link
-          href="/"
-          className="flex items-center gap-2 text-sm mb-6 hover:underline"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to home
-        </Link>
+        <Button asChild variant="link">
+          <Link href="/">
+            <ArrowLeft className="h-4 w-4" />
+            Back to home
+          </Link>
+        </Button>
 
-        <Card>
+        <Card className="border-0 md:border">
           <CardHeader>
             <CardTitle>Register to request need campaign</CardTitle>
             <CardDescription>

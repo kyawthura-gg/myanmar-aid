@@ -1,6 +1,12 @@
 "use client"
 
-import { Heart, LogOutIcon, UserIcon, UsersIcon } from "lucide-react"
+import {
+  HeartIcon,
+  LogOutIcon,
+  MenuIcon,
+  UserIcon,
+  UsersIcon,
+} from "lucide-react"
 import Link from "next/link"
 
 import { LanguageSwitcher } from "@/components/language-switcher"
@@ -48,7 +54,7 @@ export function SiteHeader() {
           />
           <span>Myanmar Aid Connect</span>
         </Link>
-        <nav className="flex items-center gap-4">
+        <nav className="flex items-center gap-2 sm:gap-4">
           {session ? (
             <>
               <DropdownMenu>
@@ -108,14 +114,46 @@ export function SiteHeader() {
             </>
           ) : (
             <>
-              <Button asChild variant="link" size="sm">
+              <Button
+                asChild
+                variant="link"
+                size="sm"
+                className="hidden sm:flex"
+              >
                 <Link href="/auth/login">Login</Link>
               </Button>
-              <Button asChild size="sm" variant="outline">
+              <Button
+                asChild
+                size="sm"
+                variant="outline"
+                className="hidden sm:flex"
+              >
                 <Link href="/register-need-campaign">
                   Start a need campaign
                 </Link>
               </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger className="sm:hidden">
+                  <MenuIcon className="w-4 h-4" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-[220px]">
+                  <DropdownMenuItem asChild>
+                    <Link href="/auth/login" className="flex items-center">
+                      <UserIcon className="mr-2 h-4 w-4" />
+                      <span>Login</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/register-need-campaign"
+                      className="flex items-center"
+                    >
+                      <HeartIcon className="mr-2 h-4 w-4 " />
+                      <span>Start a need campaign</span>
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <LanguageSwitcher />
             </>
           )}

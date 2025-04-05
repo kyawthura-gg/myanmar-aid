@@ -6,6 +6,9 @@ export default async function RegisterLayout({
 }: { children: React.ReactNode }) {
   const auth = await getAuthSession()
 
+  if (!auth?.user) {
+    return redirect("/")
+  }
   if (!auth?.user?.onboardingCompleted) {
     return redirect("/register-need-campaign")
   }

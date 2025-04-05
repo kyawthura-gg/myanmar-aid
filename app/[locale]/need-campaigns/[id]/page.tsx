@@ -107,16 +107,16 @@ export default function CampaignDonationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-muted/10">
+    <div className="min-h-screen">
       {/* Hero Section */}
       <div className="bg-white border-b">
-        <div className="container-wrapper py-6">
+        <div className="container-wrapper py-3 md:py-6">
           <Button variant="link" onClick={() => safeBack("/")}>
             <ArrowLeft className="h-4 w-4" />
             Back to home
           </Button>
 
-          <div className="mt-4">
+          <div className="mt-2 md:mt-4 pl-3">
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
               {campaign.title}
             </h1>
@@ -124,8 +124,8 @@ export default function CampaignDonationPage() {
         </div>
       </div>
 
-      <div className="container-wrapper py-6">
-        <div className="grid gap-8 lg:grid-cols-12">
+      <div className="container-wrapper py-3 md:py-6">
+        <div className="grid gap-8 lg:grid-cols-12 px-3">
           {/* Main Content */}
           <div className="lg:col-span-8 space-y-6">
             {/* Photos Gallery */}
@@ -240,23 +240,13 @@ export default function CampaignDonationPage() {
                     <Badge variant="outline" className="capitalize">
                       {campaign.accountType}
                     </Badge>
-                    <span className="text-sm text-muted-foreground">•</span>
-                    <span className="text-sm text-muted-foreground">
-                      {formatDistance(
-                        new Date(campaign.createdAt),
-                        new Date(),
-                        {
-                          addSuffix: true,
-                        }
-                      )}
-                    </span>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Recent Donations */}
-            <div className="bg-white rounded-xl border p-6">
+            {/* <div className="bg-white rounded-xl border p-6">
               <h3 className="font-semibold text-lg mb-4">Recent Donations</h3>
               {campaign.donations.length > 0 ? (
                 <div className="space-y-4">
@@ -292,7 +282,7 @@ export default function CampaignDonationPage() {
                   No donations yet. Be the first to donate!
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
 
           {/* Sidebar */}
@@ -301,7 +291,7 @@ export default function CampaignDonationPage() {
               {/* Campaign Stats */}
               <Card className="mb-6">
                 <CardHeader>
-                  <div className="space-y-2">
+                  {/* <div className="space-y-2">
                     <div className="text-3xl font-bold">
                       $
                       {campaign.donations
@@ -311,16 +301,16 @@ export default function CampaignDonationPage() {
                     <CardDescription>
                       raised by {campaign.donations.length} donors
                     </CardDescription>
-                  </div>
+                  </div> */}
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <Button
+                  {/* <Button
                     size="lg"
                     className="w-full"
                     onClick={() => setIsProofModalOpen(true)}
                   >
                     Donate Now
-                  </Button>
+                  </Button> */}
                   <div className="flex gap-2">
                     <Button
                       variant="outline"
@@ -507,7 +497,7 @@ export default function CampaignDonationPage() {
               </Card>
 
               {/* Donation Button */}
-              <Card>
+              {/* <Card>
                 <CardHeader>
                   <CardTitle>Support this Campaign</CardTitle>
                   <CardDescription>
@@ -524,7 +514,7 @@ export default function CampaignDonationPage() {
                     Submit Donation
                   </Button>
                 </CardContent>
-              </Card>
+              </Card> */}
             </div>
           </div>
 
