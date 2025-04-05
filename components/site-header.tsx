@@ -41,7 +41,11 @@ export function SiteHeader() {
           href="/"
           className="flex items-center gap-2 font-bold text-lg md:text-xl"
         >
-          <Heart className="h-6 w-6 text-primary" />
+          <img
+            src="/logo.png"
+            alt="Myanmar aid connect logo"
+            className="w-5 h-auto"
+          />
           <span>Myanmar Aid Connect</span>
         </Link>
         <nav className="flex items-center gap-4">

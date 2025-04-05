@@ -1,4 +1,3 @@
-import { HeartIcon } from "lucide-react"
 import Link from "next/link"
 
 export function SiteFooter() {
@@ -6,7 +5,11 @@ export function SiteFooter() {
     <footer className="border-t py-6 md:py-8">
       <div className="container-wrapper flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-2 font-semibold">
-          <HeartIcon className="h-5 w-5 text-primary" />
+          <img
+            src="/logo.png"
+            alt="Myanmar aid connect logo"
+            className="w-5 h-auto"
+          />
           <span>Myanmar Aid Connect</span>
         </div>
         <p className="text-sm text-muted-foreground">{`© ${new Date().getFullYear()} Myanmar Aid Connect. All rights reserved.`}</p>
