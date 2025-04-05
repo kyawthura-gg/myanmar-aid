@@ -47,6 +47,8 @@ export const campaignRouter = createTRPCRouter({
         where,
         include: {
           user: true,
+          region: true,
+          township: true,
         },
         orderBy: {
           createdAt: "desc",

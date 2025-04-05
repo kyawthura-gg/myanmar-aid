@@ -84,6 +84,8 @@ export default function AdminPage() {
     setDonationStatus(status);
   }
 
+  console.log("*** zzz ****", campaigns);
+
   return (
     <div className="container-wrapper py-10">
       <div className="flex items-center justify-between mb-6">
@@ -225,7 +227,7 @@ export default function AdminPage() {
                               Location:
                             </span>
                             <span className="col-span-2">
-                              {selectedVerification.location}
+                              {selectedVerification.region.nameEn + ", "  + selectedVerification.township.nameEn}
                             </span>
                           </div>
                           <div className="grid grid-cols-3">
@@ -250,20 +252,15 @@ export default function AdminPage() {
                           Verification Documents
                         </h3>
                         <div className="space-y-2">
-                          <div className="border rounded p-2 flex items-center justify-between">
-                            <span className="text-sm">ID Document</span>
-                            <Button variant="ghost" size="sm">
-                              View
-                            </Button>
-                          </div>
-                          <div className="border rounded p-2 flex items-center justify-between">
-                            <span className="text-sm">
-                              Location Verification
-                            </span>
-                            <Button variant="ghost" size="sm">
-                              View
-                            </Button>
-                          </div>
+                          {JSON.parse(selectedVerification.photos).map((photo: any, index: any)=>                    <div className="border rounded p-2 flex items-center justify-between">
+                              <span className="text-sm">Document {index + 1}</span>
+                              <Button onClick={()=> {
+                                window.open(`${process.env.NEXT_PUBLIC_R2_URL}/${process.env.NEXT_PUBLIC_R2_BUCKET_NAME}/${photo}`)
+                              }} variant="ghost" size="sm">
+                                View
+                              </Button>
+                          </div> 
+                        )}
                         </div>
                       </div>
                     </div>
