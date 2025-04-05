@@ -10,9 +10,49 @@ import { Toaster } from "@/components/ui/sonner"
 import { TRPCReactProvider } from "@/trpc/react"
 
 export const metadata: Metadata = {
-  title: "Myanmar Aid Connect",
+  metadataBase: new URL("https://mmaidconnect.com"),
+  title: {
+    default: "Myanmar Aid Connect",
+    template: "%s | Myanmar Aid Connect",
+  },
   description:
-    "Direct peer-to-peer aid platform for Myanmar earthquake victims",
+    "A platform built for Myanmar — where people ask for help, and others can give.",
+  keywords: [
+    "myanmar",
+    "earthquake",
+    "aid",
+    "donations",
+    "help",
+    "direct aid",
+    "peer-to-peer",
+  ],
+  authors: [{ name: "Myanmar Aid Connect" }],
+  creator: "Myanmar Aid Connect",
+  publisher: "Myanmar Aid Connect",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    alternateLocale: "my_MM",
+    title: "Myanmar Aid Connect",
+    description:
+      "A platform built for Myanmar — where people ask for help, and others can give.",
+    siteName: "Myanmar Aid Connect",
+    images: [
+      {
+        url: "/opengraph-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Myanmar Aid Connect - Direct Aid Platform",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Myanmar Aid Connect",
+    description:
+      "A platform built for Myanmar — where people ask for help, and others can give.",
+    images: ["/opengraph-image.png"],
+  },
 }
 
 const locales = ["en", "mm"]

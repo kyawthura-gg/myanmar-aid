@@ -64,7 +64,7 @@ export default function Home() {
         <section className="container-wrapper px-4 sm:px-6 pb-8 md:pb-16">
           <div className="flex flex-col gap-4 md:gap-6">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+              <h1 className="text-xl sm:text-3xl font-bold tracking-tight">
                 Give Help Directly. Make a Real Difference.
               </h1>
               <p className="text-sm sm:text-base text-muted-foreground mt-1">
