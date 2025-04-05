@@ -12,7 +12,7 @@ const getDB = (db: D1Database) => {
 
 export const getAuth = (db: D1Database) => {
   return betterAuth({
-    baseURL: process.env.BETTER_AUTH_URL,
+    baseURL: "https://mmaidconnect.com",
     database: prismaAdapter(getDB(db), {
       provider: "sqlite",
     }),
