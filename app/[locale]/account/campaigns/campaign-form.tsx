@@ -47,7 +47,6 @@ import {
   WalletIcon,
   XIcon,
 } from "lucide-react"
-import mime from "mime-types"
 import { useParams, useRouter } from "next/navigation"
 import { useMemo } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
@@ -97,9 +96,23 @@ export function CampaignForm({ defaultValues }: CampaignFormProps) {
 
       let uploadedImages: string[] = []
 
+      const mimeTypes: Record<string, string> = {
+        "image/jpeg": "jpg",
+        "image/png": "png",
+        "image/gif": "gif",
+        "image/webp": "webp",
+        "image/bmp": "bmp",
+        "image/tiff": "tiff",
+        "image/svg+xml": "svg",
+        "image/x-icon": "ico",
+        "image/heic": "heic",
+        "image/heif": "heif",
+        "image/avif": "avif",
+      }
+
       if (newPhotos.length > 0) {
         const fileFormats = newPhotos
-          .map((photo) => mime.extension(photo.type))
+          .map((photo) => mimeTypes?.[photo.type] ?? "jpg")
           .filter(Boolean) as string[]
 
         const signedURLS = await uploadMutation.mutateAsync({
