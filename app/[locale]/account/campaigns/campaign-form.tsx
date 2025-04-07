@@ -28,6 +28,7 @@ import { Textarea } from "@/components/ui/textarea"
 import categoriesOptions from "@/lib/categories.json"
 import states from "@/lib/location/states.json"
 import townships from "@/lib/location/townships.json"
+import { mimeTypes } from "@/lib/mime-types"
 import { getStorageFullURL } from "@/lib/utils"
 import { api } from "@/trpc/react"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -95,20 +96,6 @@ export function CampaignForm({ defaultValues }: CampaignFormProps) {
       )
 
       let uploadedImages: string[] = []
-
-      const mimeTypes: Record<string, string> = {
-        "image/jpeg": "jpg",
-        "image/png": "png",
-        "image/gif": "gif",
-        "image/webp": "webp",
-        "image/bmp": "bmp",
-        "image/tiff": "tiff",
-        "image/svg+xml": "svg",
-        "image/x-icon": "ico",
-        "image/heic": "heic",
-        "image/heif": "heif",
-        "image/avif": "avif",
-      }
 
       if (newPhotos.length > 0) {
         const fileFormats = newPhotos
