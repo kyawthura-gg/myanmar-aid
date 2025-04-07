@@ -110,7 +110,7 @@ export function SiteHeader() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <LanguageSwitcher />
+              {/* <LanguageSwitcher /> */}
             </>
           ) : (
             <>
@@ -154,7 +154,7 @@ export function SiteHeader() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <LanguageSwitcher />
+              {/* <LanguageSwitcher /> */}
             </>
           )}
         </nav>
