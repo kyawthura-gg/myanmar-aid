@@ -1,9 +1,8 @@
 import { createCallerFactory, createTRPCRouter } from "@/server/trpc"
 import { campaignRouter } from "./routers/campaign"
-import { postRouter } from "./routers/post"
+import { donationRouter } from "./routers/donation"
 import { uploadRouter } from "./routers/upload"
 import { userRouter } from "./routers/user"
-import { donationRouter } from "./routers/donation"
 
 /**
  * This is the primary router for your server.
@@ -11,11 +10,10 @@ import { donationRouter } from "./routers/donation"
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  post: postRouter,
   user: userRouter,
   campaign: campaignRouter,
   upload: uploadRouter,
-  donation: donationRouter
+  donation: donationRouter,
 })
 
 // export type definition of API

@@ -9,6 +9,8 @@ import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { CampaignForm } from "../campaign-form"
 
+export const runtime = "edge"
+
 export default function CreateCampaignPage() {
   return (
     <div className="container-wrapper">

@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "mmaid",
+  "compatibility_date": "2025-04-01",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "nodejs_compat_populate_process_env"
+  ],
+  "pages_build_output_dir": ".vercel/output/static",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "aid-db-dev",
+      "database_id": "7fc9f2f7-d12a-4b48-a115-d2f7ca2c9ec1"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}

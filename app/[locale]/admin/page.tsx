@@ -26,6 +26,8 @@ import { CheckCircle, Clock, Search, ShieldAlert, User } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 
+export const runtime = "edge"
+
 export default function AdminPage() {
   const [serachUserText, setSearchUserText] = useState("");
   const [filteredUserList, setFilteredUserList]= useState<any>([]);

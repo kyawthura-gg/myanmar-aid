@@ -10,7 +10,9 @@ import { Toaster } from "@/components/ui/sonner"
 import { TRPCReactProvider } from "@/trpc/react"
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://mmaidconnect.com"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+  ),
   title: {
     default: "Myanmar Aid Connect",
     template: "%s | Myanmar Aid Connect",

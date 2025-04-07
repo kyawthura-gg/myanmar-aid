@@ -68,7 +68,7 @@ export const campaignRouter = createTRPCRouter({
   upsert: protectedProcedure
     .input(
       z.object({
-        id: z.string().optional(),
+        id: z.string().nullish(),
         ...campaignServerSchema.shape,
       })
     )

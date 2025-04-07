@@ -48,6 +48,8 @@ import { useState } from "react"
 import { toast } from "sonner"
 import Loading from "./loading"
 
+export const runtime = "edge"
+
 export default function CampaignDonationPage() {
   const params = useParams()
   const [isProofModalOpen, setIsProofModalOpen] = useState(false)

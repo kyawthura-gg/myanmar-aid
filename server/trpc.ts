@@ -1,6 +1,5 @@
 import { getDB } from "@/db"
-import { getAuth } from "@/lib/auth"
-import { getCloudflareContext } from "@opennextjs/cloudflare"
+import { auth } from "@/lib/auth"
 /**
  * YOU PROBABLY DON'T NEED TO EDIT THIS FILE, UNLESS:
  * 1. You want to modify request context (see Part 1).
@@ -26,8 +25,6 @@ import { ZodError } from "zod"
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const ctx = await getCloudflareContext({ async: true })
-  const auth = getAuth((ctx.env as Cloudflare.Env).DB)
   const session = await auth.api.getSession({
     headers: opts.headers,
   })
