@@ -1,4 +1,9 @@
+import { setupDevPlatform } from "@cloudflare/next-on-pages/next-dev"
 import createNextIntlPlugin from "next-intl/plugin"
+
+if (process.env.NODE_ENV === "development") {
+  await setupDevPlatform()
+}
 
 const withNextIntl = createNextIntlPlugin("./lib/i18n/index.ts")
 
@@ -21,6 +26,3 @@ const nextConfig = {
 }
 
 export default withNextIntl(nextConfig)
-
-import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare"
-initOpenNextCloudflareForDev()
