@@ -31,6 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { signIn, signUp, useSession } from "@/lib/auth-client"
+import { mimeTypes } from "@/lib/mime-types"
 import { api } from "@/trpc/react"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
@@ -61,6 +62,7 @@ const step2Schema = z.object({
   }),
   name: z.string().min(2, "Name must be at least 2 characters"),
   socialLink: z.string().url("Please enter a valid URL"),
+  image: z.instanceof(File).nullish(),
   phoneNumber: phoneValidation,
   termsAccepted: z.boolean().refine((val) => val === true, {
     message: "You must accept the terms and conditions",
@@ -81,6 +83,7 @@ export default function RegisterFamilyPage() {
       confirmPassword: "",
     },
   })
+  const uploadMutation = api.upload.getSignedURLS.useMutation()
 
   const step2Form = useForm<z.infer<typeof step2Schema>>({
     resolver: zodResolver(step2Schema),
@@ -114,16 +117,32 @@ export default function RegisterFamilyPage() {
   }
 
   async function onStep2Submit(values: z.infer<typeof step2Schema>) {
+    let profileImage = null
+    if (values.image instanceof File) {
+      const signedValues = await uploadMutation.mutateAsync({
+        fileFormats: [mimeTypes?.[values.image.type] ?? "jpg"],
+      })
+      const signed = signedValues[0]
+
+      const responseUpload = await fetch(signed?.url, {
+        method: "PUT",
+        body: values.image,
+      })
+      if (!responseUpload.ok) {
+        throw new Error("something went wrong while upload")
+      }
+      profileImage = signed.key
+    }
     await createMutation.mutateAsync({
       ...values,
-      image: null, //TODO
+      image: profileImage,
     })
     toast.success("Profile updated successfully!")
     window.location.replace("/account/campaigns/create")
   }
 
   return (
-    <div className="container-wrapper py-3 md:py-10">
+    <div className="container-wrapper py-3 md:py-10 min-h-[75dvh]">
       <div className="max-w-3xl mx-auto">
         <Button asChild variant="link">
           <Link href="/">
@@ -388,15 +407,27 @@ export default function RegisterFamilyPage() {
                       )}
                     />
 
-                    <div className="grid gap-2">
-                      <FormLabel>Profile Image (Optional)</FormLabel>
-                      <Input
-                        id="image"
-                        name="image"
-                        type="file"
-                        accept="image/*"
-                      />
-                    </div>
+                    <FormField
+                      control={step2Form.control}
+                      name="image"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Profile Image (Optional)</FormLabel>
+                          <FormControl>
+                            <Input
+                              id="image"
+                              name="image"
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => {
+                                field.onChange(e.target.files?.[0])
+                              }}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
                     <FormField
                       control={step2Form.control}
@@ -449,7 +480,7 @@ export default function RegisterFamilyPage() {
                       <Button
                         type="submit"
                         className="max-w-[300px] w-full"
-                        loading={createMutation.isPending}
+                        loading={step2Form.formState.isSubmitting}
                       >
                         Submit Registration
                       </Button>
