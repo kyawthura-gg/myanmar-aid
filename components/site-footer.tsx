@@ -35,10 +35,10 @@ export function SiteFooter() {
               Terms of Service
             </Link>
             <Link
-              href="/contact"
+              href="/about"
               className="text-sm text-muted-foreground hover:underline"
             >
-              Contact
+              About Us
             </Link>
           </div>
         </div>
