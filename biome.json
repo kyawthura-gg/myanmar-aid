@@ -60,7 +60,8 @@
         "useNodejsImportProtocol": "off",
         "useTemplate": "off",
         "noUselessElse": "off",
-        "noNegationElse": "off"
+        "noNegationElse": "off",
+        "noParameterAssign": "off"
       },
       "a11y": {
         "useButtonType": "off",

@@ -1,5 +1,5 @@
 {
-  "name": "my-v0-project",
+  "name": "mmaid",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "pages:build": "npx @cloudflare/next-on-pages",
+    "preview": "npm run pages:build && wrangler pages dev",
     "deploy": "opennextjs-cloudflare build && wrangler deploy --minify --keep-vars",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "migrate": "npx tsx prisma/migrate.ts"
@@ -60,8 +61,9 @@
     "embla-carousel-react": "8.5.1",
     "hono": "^4.7.5",
     "input-otp": "1.4.1",
+    "kysely": "^0.27.6",
+    "kysely-d1": "^0.3.0",
     "lucide-react": "^0.454.0",
-    "mime-types": "^3.0.1",
     "nanoid": "^5.1.5",
     "next": "15.2.4",
     "next-intl": "latest",
@@ -83,7 +85,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@clack/prompts": "^0.10.0",
-    "@opennextjs/cloudflare": "0.6.3",
+    "@cloudflare/next-on-pages": "^1.13.12",
     "@types/mime-types": "^2.1.4",
     "@types/node": "^22",
     "@types/react": "^19",
