@@ -14,32 +14,6 @@
       "database_id": "7fc9f2f7-d12a-4b48-a115-d2f7ca2c9ec1"
     }
   ],
-  "env": {
-    "dev": {
-      "d1_databases": [
-        {
-          "binding": "DB",
-          "database_name": "aid-db-dev",
-          "database_id": "7fc9f2f7-d12a-4b48-a115-d2f7ca2c9ec1"
-        }
-      ],
-      "kv_namespaces": [
-        // Create a KV binding with the binding name "NEXT_INC_CACHE_KV"
-        // to enable the KV based caching:
-        // {
-        //   "binding": "NEXT_INC_CACHE_KV",
-        //   "id": "<BINDING_ID>"
-        // }
-      ],
-      "services": [
-        {
-          "binding": "WORKER_SELF_REFERENCE",
-          // The service should match the "name" of your worker
-          "service": "my-app"
-        }
-      ]
-    }
-  },
   "observability": {
     "enabled": true
   }
