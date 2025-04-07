@@ -15,7 +15,7 @@
     }
   ],
   "env": {
-    "staging": {
+    "preview": {
       "d1_databases": [
         {
           "binding": "DB",
