@@ -3,7 +3,7 @@
   "name": "mmaid",
   "compatibility_date": "2025-04-01",
   "compatibility_flags": [
-    "nodejs_compat_v2",
+    "nodejs_compat",
     "nodejs_compat_populate_process_env"
   ],
   "pages_build_output_dir": ".vercel/output/static",
