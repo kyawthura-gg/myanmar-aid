@@ -1,3 +1,5 @@
+export const runtime = "edge"
+
 export default function PrivacyPage() {
   return (
     <div className="container-wrapper prose prose-slate py-10 md:py-20 px-3">

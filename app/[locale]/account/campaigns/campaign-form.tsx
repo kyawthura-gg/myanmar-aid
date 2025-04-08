@@ -52,11 +52,22 @@ import { useParams, useRouter } from "next/navigation"
 import { useMemo } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 import { toast } from "sonner"
-import { type CampaignFormValues, campaignFormSchema } from "./campaign-schema"
+import { z } from "zod"
+import { baseCampaignSchema } from "./campaign-schema"
 import { ContactMethodsForm } from "./contact-methods"
 interface CampaignFormProps {
   defaultValues?: Partial<CampaignFormValues>
 }
+
+export const campaignFormSchema = z.object({
+  ...baseCampaignSchema,
+  photos: z
+    .array(z.union([z.instanceof(File), z.string()]))
+    .min(1, "At least one photo is required")
+    .max(6, "Maximum 6 photos allowed"),
+})
+
+export type CampaignFormValues = z.infer<typeof campaignFormSchema>
 
 export function CampaignForm({ defaultValues }: CampaignFormProps) {
   const router = useRouter()

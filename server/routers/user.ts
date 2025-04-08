@@ -1,7 +1,34 @@
 import { z } from "zod"
-import { createTRPCRouter, protectedProcedure } from "../trpc"
+import { adminProcedure, createTRPCRouter, protectedProcedure } from "../trpc"
 
 export const userRouter = createTRPCRouter({
+  userListForAdmin: adminProcedure.query(async ({ ctx, input }) => {
+    return ctx.db.user.findMany({
+      where: {
+        isAdmin: false,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    })
+  }),
+  updateUserStatus: adminProcedure
+    .input(
+      z.object({
+        status: z.enum(["pending", "active", "rejected"]),
+        id: z.string().min(1),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.user.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          status: input.status,
+        },
+      })
+    }),
   me: protectedProcedure.query(({ ctx }) => {
     return ctx.db.user.findUnique({
       where: { id: ctx.session.user.id },

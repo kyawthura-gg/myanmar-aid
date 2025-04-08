@@ -87,7 +87,6 @@
     "@biomejs/biome": "1.9.4",
     "@clack/prompts": "^0.10.0",
     "@cloudflare/next-on-pages": "^1.13.12",
-    "@types/mime-types": "^2.1.4",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",

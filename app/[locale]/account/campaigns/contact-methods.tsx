@@ -19,7 +19,11 @@ import {
 } from "@/components/ui/select"
 import { Plus, Trash2 } from "lucide-react"
 import { useFieldArray, useFormContext } from "react-hook-form"
-import type { CampaignFormValues, contactTypeList } from "./campaign-schema"
+import type { contactTypeList } from "./campaign-schema"
+import { campaignFormSchema } from "./campaign-form"
+import { z } from "zod"
+
+export type CampaignFormValues = z.infer<typeof campaignFormSchema>
 
 type ContactType = (typeof contactTypeList)[number]
 

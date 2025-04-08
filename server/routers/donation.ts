@@ -25,14 +25,19 @@ export const donationRouter = createTRPCRouter({
   donationForAdmin: protectedProcedure
     .input(
       z.object({
-        status: z.enum(["pending", "active"]),
+        status: z.enum(["pending", "verified", "rejected", "all"]),
       })
     )
     .query(async ({ ctx, input }) => {
+      let where = {}
+      if(input.status != "all") {
+        where = {
+          ...where,
+          status: input.status
+        }
+      }
       return ctx.db.donation.findMany({
-        where: {
-          status: input.status,
-        },
+        where,
         include: {
           campaign: {
             include: {
