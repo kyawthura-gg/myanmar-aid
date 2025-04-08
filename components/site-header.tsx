@@ -9,9 +9,10 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 
-import { LanguageSwitcher } from "@/components/language-switcher"
+// import { LanguageSwitcher } from "@/components/language-switcher"
 import { Button } from "@/components/ui/button"
 import { signOut, useSession } from "@/lib/auth-client"
+import { getStorageFullURL } from "@/lib/utils"
 import { useSelectedLayoutSegments } from "next/navigation"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import {
@@ -66,7 +67,11 @@ export function SiteHeader() {
                     <Avatar className="h-9 w-9">
                       {session.user.image ? (
                         <AvatarImage
-                          src={session.user.image}
+                          src={
+                            session.user.image.startsWith("/")
+                              ? getStorageFullURL(session.user.image)
+                              : session.user.image
+                          }
                           alt={session.user.name || ""}
                         />
                       ) : (
@@ -97,7 +102,7 @@ export function SiteHeader() {
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/profile">
+                      <Link href="/account/profile">
                         <UserIcon className="mr-2 h-4 w-4" />
                         <span>Profile</span>
                       </Link>
@@ -110,7 +115,7 @@ export function SiteHeader() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <LanguageSwitcher />
+              {/* <LanguageSwitcher /> */}
             </>
           ) : (
             <>
@@ -154,7 +159,7 @@ export function SiteHeader() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <LanguageSwitcher />
+              {/* <LanguageSwitcher /> */}
             </>
           )}
         </nav>
