@@ -82,7 +82,7 @@ export default function CampaignsPage() {
               key={campaign.id}
               className="h-full overflow-hidden block group"
             >
-              <div className="relative">
+              <div className="relative mb-3">
                 {campaign.photos?.[0] ? (
                   <img
                     src={getStorageFullURL(JSON.parse(campaign.photos)[0])}
