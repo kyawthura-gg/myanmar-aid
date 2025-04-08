@@ -1,18 +1,16 @@
 import { z } from "zod"
-import { createTRPCRouter, protectedProcedure, adminProcedure } from "../trpc"
+import { adminProcedure, createTRPCRouter, protectedProcedure } from "../trpc"
 
 export const userRouter = createTRPCRouter({
-    userListForAdmin: adminProcedure
-      .query(async ({ ctx, input }) => {
-
-        return ctx.db.user.findMany({
-          where: {
-            isAdmin: false
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
-        })
+  userListForAdmin: adminProcedure.query(async ({ ctx, input }) => {
+    return ctx.db.user.findMany({
+      where: {
+        isAdmin: false,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    })
   }),
   updateUserStatus: adminProcedure
     .input(
