@@ -42,7 +42,7 @@ export default function AboutPage() {
               <Heart className="h-12 w-12 text-primary" />
             </div>
             <Badge className="mb-4">About Us</Badge>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+            <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">
               Connecting Hearts, Rebuilding Lives
             </h1>
             <p className="max-w-[600px] text-muted-foreground text-lg mb-8">

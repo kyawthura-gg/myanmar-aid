@@ -283,7 +283,13 @@ export default function Home() {
                           <div className="flex items-center gap-3">
                             <Avatar className="h-6 w-6 border">
                               {campaign.user?.image ? (
-                                <AvatarImage src={campaign.user.image} />
+                                <AvatarImage
+                                  src={
+                                    campaign.user?.image.startsWith("/")
+                                      ? getStorageFullURL(campaign.user?.image)
+                                      : campaign.user?.image
+                                  }
+                                />
                               ) : (
                                 <AvatarFallback>
                                   <UserIcon className="h-3 w-3" />

@@ -316,18 +316,18 @@ export function NeedCampaignDetails({ campaign }: { campaign: RouterOutput }) {
 
               {/* Payment Methods */}
               <Card>
-                <CardHeader>
+                <CardHeader className="p-3 md:p-6">
                   <CardTitle className="flex items-center gap-2 text-sm font-medium">
                     <CreditCardIcon className="h-4 w-4" />
                     Payment Methods
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 p-3 md:p-6">
                   {campaign.payments.map((payment, index) => (
                     <div
                       key={index}
                       className={cn(
-                        "rounded-lg border p-4 transition-colors",
+                        "rounded-lg border p-2 md:p-4 transition-colors",
                         payment.isVerified && "border-green-200 bg-green-50",
                         "hover:border-primary/50"
                       )}
@@ -441,6 +441,16 @@ export function NeedCampaignDetails({ campaign }: { campaign: RouterOutput }) {
                                 </span>
                                 <span className="font-medium">
                                   {payment.mobileProvider}
+                                </span>
+                              </div>
+                            )}
+                            {payment.accountName && (
+                              <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
+                                <span className="text-muted-foreground">
+                                  Account Name:
+                                </span>
+                                <span className="font-medium">
+                                  {payment.accountName}
                                 </span>
                               </div>
                             )}
