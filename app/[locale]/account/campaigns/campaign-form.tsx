@@ -492,7 +492,34 @@ export function CampaignForm({ defaultValues }: CampaignFormProps) {
                         <FormItem>
                           <FormLabel>Payment Method</FormLabel>
                           <Select
-                            onValueChange={field.onChange}
+                            onValueChange={(v) => {
+                              field.onChange(v)
+                              form.setValue(
+                                `payments.${index}.accountName`,
+                                undefined
+                              )
+                              form.setValue(
+                                `payments.${index}.accountNumber`,
+                                undefined
+                              )
+                              form.setValue(
+                                `payments.${index}.cryptoAddress`,
+                                undefined
+                              )
+                              form.setValue(
+                                `payments.${index}.mobileNumber`,
+                                undefined
+                              )
+                              form.setValue(
+                                `payments.${index}.accountBankName`,
+                                undefined
+                              )
+                              form.setValue(
+                                `payments.${index}.mobileProvider`,
+                                undefined
+                              )
+                              form.setValue(`payments.${index}.link`, undefined)
+                            }}
                             defaultValue={field.value}
                           >
                             <FormControl>
@@ -567,6 +594,7 @@ export function CampaignForm({ defaultValues }: CampaignFormProps) {
                                 <Input
                                   {...field}
                                   placeholder="Enter bank name"
+                                  value={field.value ?? ""}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -583,6 +611,7 @@ export function CampaignForm({ defaultValues }: CampaignFormProps) {
                                 <Input
                                   {...field}
                                   placeholder="Enter account holder name"
+                                  value={field.value ?? ""}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -599,6 +628,7 @@ export function CampaignForm({ defaultValues }: CampaignFormProps) {
                                 <Input
                                   {...field}
                                   placeholder="Enter account number"
+                                  value={field.value ?? ""}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -617,7 +647,11 @@ export function CampaignForm({ defaultValues }: CampaignFormProps) {
                             <FormItem>
                               <FormLabel>Wallet Address</FormLabel>
                               <FormControl>
-                                <Input {...field} placeholder="0x..." />
+                                <Input
+                                  {...field}
+                                  placeholder="0x..."
+                                  value={field.value ?? ""}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -627,36 +661,33 @@ export function CampaignForm({ defaultValues }: CampaignFormProps) {
                     )}
 
                     {fieldMethodType === "mobilepayment" && (
-                      <>
+                      <div className="grid gap-4 md:grid-cols-2">
                         <FormField
                           control={form.control}
                           name={`payments.${index}.mobileProvider`}
                           render={({ field: formField }) => (
-                            <FormItem>
+                            <FormItem className="mb-2">
                               <FormLabel>Mobile Provider</FormLabel>
-                              <Select
-                                onValueChange={formField.onChange}
-                                defaultValue={formField.value}
-                              >
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select provider" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  {mobilePaymentProviders[field.country]?.map(
-                                    (provider) => (
-                                      <SelectItem
-                                        key={provider}
-                                        value={provider}
-                                      >
-                                        {provider}
-                                      </SelectItem>
-                                    )
-                                  )}
-                                  <SelectItem value="Other">Other</SelectItem>
-                                </SelectContent>
-                              </Select>
+                              <Input
+                                {...formField}
+                                placeholder="KBZ Pay, CB Pay, MMQR"
+                                value={formField.value ?? ""}
+                              />
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name={`payments.${index}.accountName`}
+                          render={({ field: formField }) => (
+                            <FormItem className="mb-2">
+                              <FormLabel>Account Name</FormLabel>
+                              <Input
+                                {...formField}
+                                placeholder="Kyaw Kyaw"
+                                value={formField.value ?? ""}
+                              />
                               <FormMessage />
                             </FormItem>
                           )}
@@ -668,13 +699,17 @@ export function CampaignForm({ defaultValues }: CampaignFormProps) {
                             <FormItem>
                               <FormLabel>Mobile Number</FormLabel>
                               <FormControl>
-                                <Input {...field} placeholder="+959..." />
+                                <Input
+                                  {...field}
+                                  placeholder="+959..."
+                                  value={field.value ?? ""}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-                      </>
+                      </div>
                     )}
 
                     {fieldMethodType === "link" && (
@@ -689,6 +724,7 @@ export function CampaignForm({ defaultValues }: CampaignFormProps) {
                                 {...field}
                                 type="url"
                                 placeholder="https://..."
+                                value={field.value ?? ""}
                               />
                             </FormControl>
                             <FormMessage />
