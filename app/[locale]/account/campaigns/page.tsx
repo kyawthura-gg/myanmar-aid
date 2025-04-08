@@ -1,6 +1,5 @@
 "use client"
 
-import { Plus } from "lucide-react"
 import Link from "next/link"
 
 import { Badge } from "@/components/ui/badge"
@@ -13,10 +12,35 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { getStorageFullURL } from "@/lib/utils"
 import { api } from "@/trpc/react"
 
+import { ImageIcon, Plus, Trash } from "lucide-react"
+import { toast } from "sonner"
+
 export default function CampaignsPage() {
-  const { data: campaigns, isLoading } = api.campaign.list.useQuery()
+  const { data: campaigns, isLoading, refetch } = api.campaign.list.useQuery()
+  const deleteMutation = api.campaign.delete.useMutation({
+    onSuccess: () => {
+      refetch()
+    },
+  })
+
+  const handleDelete = async (id: string) => {
+    if (
+      !confirm(
+        "This action cannot be undone. This will permanently delete your campaign and remove all of its data from our servers."
+      )
+    ) {
+      return
+    }
+
+    toast.promise(deleteMutation.mutateAsync(id), {
+      loading: "Deleting campaign...",
+      success: "Campaign deleted successfully",
+      error: "Failed to delete campaign",
+    })
+  }
 
   return (
     <div className="container-wrapper py-6 sm:py-10 min-h-[80dvh] px-4 sm:px-6">
@@ -54,38 +78,42 @@ export default function CampaignsPage() {
       ) : campaigns?.length ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {campaigns.map((campaign) => (
-            <Card key={campaign.id}>
-              <CardHeader className="p-4 sm:p-6">
-                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4">
-                  <div>
-                    <CardTitle className="text-lg sm:text-xl">
-                      {campaign.title}
-                    </CardTitle>
-                    <CardDescription className="text-sm">
-                      Created on{" "}
-                      {new Date(campaign.createdAt).toLocaleDateString()}
-                    </CardDescription>
+            <Card
+              key={campaign.id}
+              className="h-full overflow-hidden block group"
+            >
+              <div className="relative">
+                {campaign.photos?.[0] ? (
+                  <img
+                    src={getStorageFullURL(JSON.parse(campaign.photos)[0])}
+                    alt={campaign.title}
+                    className="w-full h-40 sm:h-52 object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                ) : (
+                  <div className="w-full h-40 sm:h-52 bg-muted flex items-center justify-center">
+                    <ImageIcon className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground" />
                   </div>
-                  <Badge
-                    variant={
-                      campaign.status === "active"
-                        ? "default"
-                        : campaign.status === "rejected"
-                          ? "destructive"
-                          : "secondary"
-                    }
-                    className="capitalize self-start"
-                  >
-                    {campaign.status}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="p-4 sm:p-6 pt-0">
+                )}
+                <Badge
+                  variant={
+                    campaign.status === "active"
+                      ? "default"
+                      : campaign.status === "rejected"
+                        ? "destructive"
+                        : "secondary"
+                  }
+                  className="capitalize absolute top-2 right-2"
+                >
+                  {campaign.status}
+                </Badge>
+              </div>
+              <CardContent>
+                <CardTitle className="mb-2">{campaign.title}</CardTitle>
                 <p className="line-clamp-3 text-sm sm:text-base text-muted-foreground">
                   {campaign.description}
                 </p>
               </CardContent>
-              <CardFooter className="p-4 sm:p-6 flex flex-col sm:flex-row gap-2 sm:gap-4">
+              <CardFooter className="flex flex-col sm:flex-row gap-2 sm:gap-4">
                 <Button variant="outline" asChild className="w-full sm:w-auto">
                   <Link href={`/account/campaigns/${campaign.id}`}>
                     View Details
@@ -99,6 +127,15 @@ export default function CampaignsPage() {
                   <Link href={`/account/campaigns/${campaign.id}/edit`}>
                     Edit
                   </Link>
+                </Button>
+
+                <Button
+                  variant="destructive"
+                  className="w-full sm:w-auto ml-auto"
+                  onClick={() => handleDelete(campaign.id)}
+                >
+                  <Trash className="h-4 w-4 mr-2" />
+                  Delete
                 </Button>
               </CardFooter>
             </Card>
