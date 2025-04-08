@@ -37,10 +37,10 @@ export const campaignRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       let where = {}
-      if(input.status != "all") {
+      if (input.status !== "all") {
         where = {
           ...where,
-          status: input.status
+          status: input.status,
         }
       }
       return ctx.db.campaign.findMany({
@@ -105,35 +105,61 @@ export const campaignRouter = createTRPCRouter({
         },
       })
     }),
-  listActive: publicProcedure.query(async ({ ctx }) => {
-    const campaigns = await ctx.db.campaign.findMany({
-      where: {
-        status: "active",
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      include: {
-        payments: true,
-        user: {
-          select: {
-            name: true,
-            image: true,
-          },
+  listActive: publicProcedure
+    .input(
+      z.object({
+        regionCode: z.string().optional(),
+        townshipCode: z.string().optional(),
+        categories: z.string().array(),
+        hasPayment: z.boolean().optional(),
+        accountType: z.enum(["individual", "org"]).optional(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const campaigns = await ctx.db.campaign.findMany({
+        where: {
+          status: "active",
+          regionCode: input.regionCode,
+          townshipCode: input.townshipCode,
+          accountType: input.accountType,
+          payments: input.hasPayment ? { some: {} } : undefined,
+          ...(input.categories && input.categories.length > 0
+            ? {
+                OR: input.categories.map((category) => ({
+                  categories: {
+                    contains: category,
+                  },
+                })),
+              }
+            : {}),
         },
-        donations: {
-          select: {
-            id: true,
-          },
+        orderBy: {
+          createdAt: "desc",
         },
-      },
-    })
+        include: {
+          payments: true,
+          user: {
+            select: {
+              name: true,
+              image: true,
+            },
+          },
+          donations: {
+            select: {
+              id: true,
+            },
+          },
+          region: true,
+          township: true,
+        },
+      })
 
-    return campaigns.map((campaign) => ({
-      ...campaign,
-      photos: parseStringToArray(campaign.photos),
-    }))
-  }),
+      return campaigns.map((campaign) => ({
+        ...campaign,
+        photos: parseStringToArray(campaign.photos),
+        categories: parseStringToArray(campaign.categories),
+      }))
+    }),
   getById: publicProcedure.input(z.string()).query(async ({ ctx, input }) => {
     const data = await ctx.db.campaign.findUniqueOrThrow({
       where: {
@@ -141,8 +167,16 @@ export const campaignRouter = createTRPCRouter({
       },
       include: {
         payments: true,
+        user: {
+          select: {
+            name: true,
+            image: true,
+            phone: true,
+          },
+        },
         region: true,
         township: true,
+        donations: true,
       },
     })
     return {
@@ -169,10 +203,7 @@ export const campaignRouter = createTRPCRouter({
             select: {
               name: true,
               image: true,
-              // facebookLink: true,
               phone: true,
-              // viberPhoneNumber: true,
-              // whatsappPhoneNumber: true,
             },
           },
           region: true,
@@ -190,6 +221,16 @@ export const campaignRouter = createTRPCRouter({
           value: string
         }>(data?.contactMethods),
       }
+    }),
+  delete: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.campaign.delete({
+        where: {
+          id: input,
+          userId: ctx.session.user.id,
+        },
+      })
     }),
 })
 

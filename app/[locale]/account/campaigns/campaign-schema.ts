@@ -15,13 +15,13 @@ export const paymentMethodSchema = z.object({
   country: z.string({
     required_error: "Please select a country",
   }),
-  accountName: z.string().optional(),
-  accountNumber: z.string().optional(),
-  cryptoAddress: z.string().optional(),
-  mobileNumber: z.string().optional(),
-  accountBankName: z.string().optional(),
-  mobileProvider: z.string().optional(),
-  link: z.string().optional(),
+  accountName: z.string().nullish(),
+  accountNumber: z.string().nullish(),
+  cryptoAddress: z.string().nullish(),
+  mobileNumber: z.string().nullish(),
+  accountBankName: z.string().nullish(),
+  mobileProvider: z.string().nullish(),
+  link: z.string().nullish(),
 })
 
 export const contactSchema = z
@@ -50,7 +50,6 @@ export const baseCampaignSchema = {
     .array(paymentMethodSchema)
     .min(1, "At least one payment method is required"),
 }
-
 
 export const campaignServerSchema = z.object({
   ...baseCampaignSchema,

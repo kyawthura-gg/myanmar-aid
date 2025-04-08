@@ -1,12 +1,6 @@
 "use client"
 
-import {
-  Heart,
-  ImageIcon,
-  SearchIcon,
-  UserIcon,
-  WalletIcon,
-} from "lucide-react"
+import { Heart, ImageIcon, UserIcon, WalletIcon } from "lucide-react"
 import Link from "next/link"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -18,26 +12,67 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
+import {
+  RegionDropdown,
+  TownshipDropdown,
+} from "@/components/ui/location-dropdown"
+import MultipleSelector from "@/components/ui/multi-select"
 import { useSession } from "@/lib/auth-client"
+import categoriesOptions from "@/lib/categories.json"
+import states from "@/lib/location/states.json"
+import townships from "@/lib/location/townships.json"
 import { cn, getStorageFullURL } from "@/lib/utils"
 import { api } from "@/trpc/react"
-import { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useMemo } from "react"
 
 export default function Home() {
-  const [searchTerm, setSearchTerm] = useState("")
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const { data: session } = useSession()
+  const selectedCategories = searchParams.get("categories")?.split(",") || []
+  const selectedRegion = searchParams.get("region")
+  const selectedTownship = searchParams.get("township")
+  const hasPayment = searchParams.get("hasPayment") === "true"
 
-  const { data: campaigns, isLoading } = api.campaign.listActive.useQuery()
+  const { data: campaigns, isLoading } = api.campaign.listActive.useQuery({
+    categories: selectedCategories,
+    regionCode: selectedRegion ?? undefined,
+    townshipCode: selectedTownship ?? undefined,
+    hasPayment,
+  })
 
-  const filteredCampaigns =
-    campaigns?.filter((campaign) => {
-      const matchesSearch =
-        campaign.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        campaign.description.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredCampaigns = campaigns ?? []
 
-      return matchesSearch
-    }) ?? []
+  const townshipsForSelectedRegion = useMemo(() => {
+    return townships.filter(
+      (township) => township.regionCode === selectedRegion
+    )
+  }, [selectedRegion])
+
+  const updateSearchParams = (
+    params: Record<string, string | string[] | boolean>
+  ) => {
+    const newSearchParams = new URLSearchParams(searchParams.toString())
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        if (value.length > 0) {
+          newSearchParams.set(key, value.join(","))
+        } else {
+          newSearchParams.delete(key)
+        }
+      } else if (value) {
+        newSearchParams.set(key, String(value))
+      } else {
+        newSearchParams.delete(key)
+      }
+    })
+
+    router.push(`?${newSearchParams.toString()}`, { scroll: false })
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -74,18 +109,104 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col gap-4 md:gap-6">
-              <div className="flex flex-col md:flex-row gap-3">
-                <div className="relative flex-1">
-                  <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="search"
-                    placeholder="Search ..."
-                    className="pl-8"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
+              <Card className="p-4 sm:p-6">
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-lg font-semibold">Filters</h2>
+                    <Button
+                      variant="link"
+                      size="sm"
+                      onClick={() => {
+                        router.replace("?", { scroll: false })
+                      }}
+                      disabled={
+                        !selectedCategories.length &&
+                        !selectedRegion &&
+                        !selectedTownship &&
+                        !hasPayment
+                      }
+                    >
+                      Reset filters
+                    </Button>
+                  </div>
+                  <div className="grid md:grid-cols-[2fr,1fr,1fr] gap-6">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Categories</Label>
+                      <MultipleSelector
+                        value={categoriesOptions.filter((option) =>
+                          selectedCategories.includes(option.value)
+                        )}
+                        onChange={(selected) => {
+                          updateSearchParams({
+                            categories: selected.map((option) => option.value),
+                          })
+                        }}
+                        defaultOptions={categoriesOptions}
+                        placeholder="Filter by categories"
+                        emptyIndicator={
+                          <p className="text-center text-muted-foreground py-6">
+                            No matching categories found
+                          </p>
+                        }
+                      />
+                    </div>
+
+                    {/* Location filters side by side on desktop */}
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">
+                        State/Region
+                      </Label>
+                      <RegionDropdown
+                        options={states}
+                        onChange={(location) => {
+                          updateSearchParams({
+                            region: location.regionCode,
+                            township: "",
+                          })
+                        }}
+                        defaultValue={selectedRegion ?? undefined}
+                        placeholder="Select state/region"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Township</Label>
+                      <TownshipDropdown
+                        options={townshipsForSelectedRegion}
+                        onChange={(location) => {
+                          updateSearchParams({
+                            township: location.townshipCode,
+                          })
+                        }}
+                        placeholder={
+                          selectedRegion
+                            ? "Select township"
+                            : "Please select state/region first"
+                        }
+                        disabled={!selectedRegion}
+                        defaultValue={selectedTownship ?? undefined}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Payment filter */}
+                  <div className="flex items-center gap-2 border-t pt-4">
+                    <Checkbox
+                      id="hasPayment"
+                      checked={hasPayment}
+                      onCheckedChange={(checked) =>
+                        updateSearchParams({ hasPayment: !!checked })
+                      }
+                    />
+                    <label
+                      htmlFor="hasPayment"
+                      className="text-sm font-medium leading-none cursor-pointer"
+                    >
+                      Only show campaigns with payment methods
+                    </label>
+                  </div>
                 </div>
-              </div>
+              </Card>
 
               {isLoading ? (
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -162,7 +283,13 @@ export default function Home() {
                           <div className="flex items-center gap-3">
                             <Avatar className="h-6 w-6 border">
                               {campaign.user?.image ? (
-                                <AvatarImage src={campaign.user.image} />
+                                <AvatarImage
+                                  src={
+                                    campaign.user?.image.startsWith("/")
+                                      ? getStorageFullURL(campaign.user?.image)
+                                      : campaign.user?.image
+                                  }
+                                />
                               ) : (
                                 <AvatarFallback>
                                   <UserIcon className="h-3 w-3" />
