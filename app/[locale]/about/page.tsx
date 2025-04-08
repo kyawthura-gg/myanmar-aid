@@ -29,6 +29,8 @@ const teamMembers = [
   },
 ]
 
+export const runtime = "edge"
+
 export default function AboutPage() {
   return (
     <main className="flex-1">
