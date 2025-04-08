@@ -48,12 +48,11 @@ import {
   WalletIcon,
   XIcon,
 } from "lucide-react"
-import mime from "mime-types"
-import { z } from "zod"
 import { useParams, useRouter } from "next/navigation"
 import { useMemo } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 import { toast } from "sonner"
+import { z } from "zod"
 import { baseCampaignSchema } from "./campaign-schema"
 import { ContactMethodsForm } from "./contact-methods"
 interface CampaignFormProps {
