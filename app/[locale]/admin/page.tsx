@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
+import { getStorageFullURL } from "@/lib/utils"
 import { api } from "@/trpc/react"
 import { CheckCircle, Clock, Search, ShieldAlert, User } from "lucide-react"
 import Link from "next/link"
@@ -29,23 +30,24 @@ import { useEffect, useState } from "react"
 export const runtime = "edge"
 
 export default function AdminPage() {
-  const [serachUserText, setSearchUserText] = useState("");
-  const [filteredUserList, setFilteredUserList]= useState<any>([]);
-  const [verificationsStatus, setVerificationStatus] = useState<any>("pending"); // this status is for to filter list of the api data
-  const [dontationStatus, setDonationStatus] = useState<any>("pending"); // this status is for to filter list of the api data
+  const [serachUserText, setSearchUserText] = useState("")
+  const [filteredUserList, setFilteredUserList] = useState<any>([])
+  const [verificationsStatus, setVerificationStatus] = useState<any>("pending") // this status is for to filter list of the api data
+  const [dontationStatus, setDonationStatus] = useState<any>("pending") // this status is for to filter list of the api data
   const [adminNotes, setAdminNotes] = useState("")
   const [donationVerificationStatus, setDonationVerificationStatus] =
     useState<any>("pending")
-  const [selectedDonation, setSelectedDonation] = useState<any>(null);
-  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [selectedDonation, setSelectedDonation] = useState<any>(null)
+  const [selectedUser, setSelectedUser] = useState<any>(null)
   const [selectedVerification, setSelectedVerification] = useState<any>(null)
   const { data: campaigns, refetch } = api.campaign.listForAdmin.useQuery({
     status: verificationsStatus,
   })
-  const { data: users, refetch: refetchUsers } = api.user.userListForAdmin.useQuery();
+  const { data: users, refetch: refetchUsers } =
+    api.user.userListForAdmin.useQuery()
 
   const updateCampaignMutation = api.campaign.updateStatus.useMutation()
-  const updateUserStatusMutation = api.user.updateUserStatus.useMutation();
+  const updateUserStatusMutation = api.user.updateUserStatus.useMutation()
   const { data: donation, refetch: refetchDonation } =
     api.donation.donationForAdmin.useQuery({ status: dontationStatus })
   const updateDonationMutation = api.donation.updateDonationStatus.useMutation()
@@ -91,28 +93,30 @@ export default function AdminPage() {
     setDonationVerificationStatus(value)
   }
 
-  const handleVerificatoinStatusChange = (status: string)=> {
-    setVerificationStatus(status);
+  const handleVerificatoinStatusChange = (status: string) => {
+    setVerificationStatus(status)
   }
 
-  const handleDonationStatusChange = (status: string)=> {
-    setDonationStatus(status);
+  const handleDonationStatusChange = (status: string) => {
+    setDonationStatus(status)
   }
 
-  const searchUser = (searchText: string)=> {
-    const inputText = searchText;
-    setSearchUserText(inputText);
-    if(inputText == ""){
-      return setFilteredUserList(users);
+  const searchUser = (searchText: string) => {
+    const inputText = searchText
+    setSearchUserText(inputText)
+    if (inputText === "") {
+      return setFilteredUserList(users)
     } else {
-      const results = users ?  users.filter((item:any) => item.name.includes(inputText)) : [];
-      return setFilteredUserList(results);
+      const results = users
+        ? users.filter((item: any) => item.name.includes(inputText))
+        : []
+      return setFilteredUserList(results)
     }
-  };
+  }
 
-  useEffect(()=> {
+  useEffect(() => {
     users ? setFilteredUserList(users) : setFilteredUserList([])
-  },[users])
+  }, [users])
 
   return (
     <div className="container-wrapper py-10">
@@ -134,7 +138,7 @@ export default function AdminPage() {
           <TabsTrigger value="donations">Donations</TabsTrigger>
           <TabsTrigger value="users">User</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="verifications" className="mt-6">
           <div className="grid gap-6 md:grid-cols-3">
             <div className="md:col-span-1 space-y-4">
@@ -150,24 +154,20 @@ export default function AdminPage() {
                   />
                 </div>
                 <Select
-                      value={verificationsStatus}
-                      onValueChange={handleVerificatoinStatusChange}
-                    >
-                      <SelectTrigger
-                        id="admin-verified"
-                        className="w-[180px]"
-                      >
-                        <SelectValue placeholder="Status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All</SelectItem>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="rejected">Rejected</SelectItem>
-                      </SelectContent>
-               </Select>
+                  value={verificationsStatus}
+                  onValueChange={handleVerificatoinStatusChange}
+                >
+                  <SelectTrigger id="admin-verified" className="w-[180px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="rejected">Rejected</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-
 
               <div className="border rounded-md">
                 {campaigns ? (
@@ -255,7 +255,9 @@ export default function AdminPage() {
                               Location:
                             </span>
                             <span className="col-span-2">
-                              {selectedVerification.region.nameEn + ", "  + selectedVerification.township.nameEn}
+                              {selectedVerification.region.nameEn +
+                                ", " +
+                                selectedVerification.township.nameEn}
                             </span>
                           </div>
                           <div className="grid grid-cols-3">
@@ -276,19 +278,29 @@ export default function AdminPage() {
                       </div>
 
                       <div>
-                        <h3 className="text-sm font-medium mb-2">
-                          Verification Documents
-                        </h3>
+                        <h3 className="text-sm font-medium mb-2">Photos</h3>
                         <div className="space-y-2">
-                          {JSON.parse(selectedVerification.photos).map((photo: any, index: any)=>                    <div className="border rounded p-2 flex items-center justify-between">
-                              <span className="text-sm">Document {index + 1}</span>
-                              <Button onClick={()=> {
-                                window.open(`${process.env.NEXT_PUBLIC_R2_URL}/${process.env.NEXT_PUBLIC_R2_BUCKET_NAME}/${photo}`)
-                              }} variant="ghost" size="sm">
-                                View
-                              </Button>
-                          </div> 
-                        )}
+                          {JSON.parse(selectedVerification.photos).map(
+                            (photo: any, index: number) => (
+                              <div
+                                key={index}
+                                className="border rounded p-2 flex items-center justify-between"
+                              >
+                                <span className="text-sm">
+                                  Photo {index + 1}
+                                </span>
+                                <Button
+                                  onClick={() => {
+                                    window.open(getStorageFullURL(photo))
+                                  }}
+                                  variant="ghost"
+                                  size="sm"
+                                >
+                                  View
+                                </Button>
+                              </div>
+                            )
+                          )}
                         </div>
                       </div>
                     </div>
@@ -353,34 +365,30 @@ export default function AdminPage() {
         <TabsContent value="donations" className="mt-6">
           <div className="grid gap-6 md:grid-cols-3">
             <div className="md:col-span-1 space-y-4">
-            <div className="flex items-center gap-[20px]">
-            <div className="relative flex-1">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="search"
-                  placeholder="Search donations..."
-                  className="pl-8"
-                />
-            </div>
-            <Select
-                    value={dontationStatus}
-                    onValueChange={handleDonationStatusChange}
-                  >
-                    <SelectTrigger
-                      id="admin-verified"
-                      className="w-[180px]"
-                    >
-                      <SelectValue placeholder="Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="verified">Verified</SelectItem>
-                      <SelectItem value="rejected">Rejected</SelectItem>
-                    </SelectContent>
-            </Select>
-            </div>
-
+              <div className="flex items-center gap-[20px]">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="search"
+                    placeholder="Search donations..."
+                    className="pl-8"
+                  />
+                </div>
+                <Select
+                  value={dontationStatus}
+                  onValueChange={handleDonationStatusChange}
+                >
+                  <SelectTrigger id="admin-verified" className="w-[180px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="verified">Verified</SelectItem>
+                    <SelectItem value="rejected">Rejected</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
               <div className="border rounded-md">
                 <div className="divide-y">
@@ -606,35 +614,31 @@ export default function AdminPage() {
         <TabsContent value="users" className="mt-6">
           <div className="grid gap-6 md:grid-cols-3">
             <div className="md:col-span-1 space-y-4">
-            <div className="flex items-center gap-[20px]">
-            <div className="relative flex-1">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  value={serachUserText}
-                  onChange={(e: any)=> searchUser(e.target.value)}
-                  type="search"
-                  placeholder="Search users..."
-                  className="pl-8"
-                />
-            </div>
-            <Select
-                    value={dontationStatus}
-                    onValueChange={handleDonationStatusChange}
-                  >
-                    <SelectTrigger
-                      id="admin-verified"
-                      className="w-[180px]"
-                    >
-                      <SelectValue placeholder="Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="rejected">Rejected</SelectItem>
-                    </SelectContent>
-            </Select>
-            </div>
-
+              <div className="flex items-center gap-[20px]">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    value={serachUserText}
+                    onChange={(e: any) => searchUser(e.target.value)}
+                    type="search"
+                    placeholder="Search users..."
+                    className="pl-8"
+                  />
+                </div>
+                <Select
+                  value={dontationStatus}
+                  onValueChange={handleDonationStatusChange}
+                >
+                  <SelectTrigger id="admin-verified" className="w-[180px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="rejected">Rejected</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
               <div className="border rounded-md">
                 <div className="divide-y">
@@ -648,9 +652,7 @@ export default function AdminPage() {
                         >
                           <div className="flex justify-between items-start">
                             <div>
-                              <div className="font-medium">
-                                {user.name}
-                              </div>
+                              <div className="font-medium">{user.name}</div>
                               <div className="text-sm text-muted-foreground">
                                 {user.email}
                               </div>
@@ -660,9 +662,7 @@ export default function AdminPage() {
                               className="flex items-center gap-1"
                             >
                               <Clock className="h-3 w-3" />
-                              <span>{
-                              user.status
-                             }</span>
+                              <span>{user.status}</span>
                             </Badge>
                           </div>
                         </div>
@@ -678,9 +678,7 @@ export default function AdminPage() {
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div>
-                        <CardTitle>
-                          {selectedUser.name}
-                        </CardTitle>
+                        <CardTitle>{selectedUser.name}</CardTitle>
                         {/* <CardDescription>
                           From {selectedUser.name} to{" "}
                           {selectedUser.name}
@@ -711,7 +709,9 @@ export default function AdminPage() {
                             </span>
                           </div>
                           <div className="grid grid-cols-3">
-                            <span className="text-muted-foreground">Email:</span>
+                            <span className="text-muted-foreground">
+                              Email:
+                            </span>
                             <span className="col-span-2">
                               {selectedUser.email}
                             </span>
@@ -736,17 +736,17 @@ export default function AdminPage() {
                             <span className="text-muted-foreground">
                               Account type:
                             </span>
-                            <span className="col-span-2">{
-                            selectedUser.accountType == "org" ? "Organization" : "Individual"
-                            }</span>
+                            <span className="col-span-2">
+                              {selectedUser.accountType === "org"
+                                ? "Organization"
+                                : "Individual"}
+                            </span>
                           </div>
                         </div>
                       </div>
 
                       <div>
-                        <h3 className="text-sm font-medium mb-2">
-                          User photo
-                        </h3>
+                        <h3 className="text-sm font-medium mb-2">User photo</h3>
                         <div className="border rounded-lg p-4 text-center">
                           <div className="bg-muted aspect-video rounded flex items-center justify-center mb-2">
                             <Button variant="ghost">View user photo</Button>
@@ -758,8 +758,8 @@ export default function AdminPage() {
                   <CardFooter className="flex justify-between">
                     <div className="flex gap-2">
                       <Button
-                        onClick={()=> {
-                          handleUserStatusUpdate("rejected");
+                        onClick={() => {
+                          handleUserStatusUpdate("rejected")
                         }}
                         variant="destructive"
                       >
@@ -768,9 +768,11 @@ export default function AdminPage() {
                       </Button>
                       {/* <Button variant="outline">Contact Donor</Button> */}
                     </div>
-                    <Button onClick={()=> {
-                      handleUserStatusUpdate("active")
-                    }}>
+                    <Button
+                      onClick={() => {
+                        handleUserStatusUpdate("active")
+                      }}
+                    >
                       <CheckCircle className="h-4 w-4 mr-2" />
                       Accept
                     </Button>
