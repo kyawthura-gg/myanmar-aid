@@ -1,4 +1,6 @@
 # Myanmar Aid Platform
+Every donation goes straight to real people in need — families, communities, and individuals affected by the earthquake.
+
 
 ## Setup Guide
 
