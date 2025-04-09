@@ -280,26 +280,9 @@ export default function Home() {
                         </CardHeader>
 
                         <CardContent className="p-4 pt-0">
-                          <div className="flex items-center gap-3">
-                            <Avatar className="h-6 w-6 border">
-                              {campaign.user?.image ? (
-                                <AvatarImage
-                                  src={
-                                    campaign.user?.image.startsWith("/")
-                                      ? getStorageFullURL(campaign.user?.image)
-                                      : campaign.user?.image
-                                  }
-                                />
-                              ) : (
-                                <AvatarFallback>
-                                  <UserIcon className="h-3 w-3" />
-                                </AvatarFallback>
-                              )}
-                            </Avatar>
-                            <span className="text-xs text-muted-foreground">
-                              {campaign.user?.name}
-                            </span>
-                          </div>
+                          <span className="text-xs text-muted-foreground">
+                            posted by {campaign.user?.name}
+                          </span>
                         </CardContent>
 
                         <CardFooter className="p-4 pt-0">
