@@ -42,12 +42,17 @@ interface RegionDropdownProps extends BaseDropdownProps {
   options: Region[]
   onChange?: (region: Region) => void
   defaultValue?: string
+  /**
+   * Whether to allow clearing the selected value
+   */
+  clearable?: boolean
 }
 
 interface TownshipDropdownProps extends BaseDropdownProps {
   options: Township[]
   onChange?: (township: Township) => void
   defaultValue?: string
+  clearable?: boolean
 }
 
 const DropdownUI = ({
@@ -117,6 +122,7 @@ const RegionDropdownComponent = (
     defaultValue,
     disabled = false,
     placeholder = "Select region",
+    clearable,
     ...props
   }: RegionDropdownProps,
   ref: React.ForwardedRef<HTMLButtonElement>
@@ -126,11 +132,18 @@ const RegionDropdownComponent = (
 
   const handleSelect = useCallback(
     (region: Region) => {
+      if (selected?.id === region.id && clearable) {
+        setSelected(undefined)
+        //@ts-expect-error
+        onChange?.(null)
+        setOpen(false)
+        return
+      }
       setSelected(region)
       onChange?.(region)
       setOpen(false)
     },
-    [onChange]
+    [onChange, selected, clearable]
   )
 
   useEffect(() => {
@@ -182,6 +195,7 @@ const TownshipDropdownComponent = (
     defaultValue,
     disabled = false,
     placeholder = "Select township",
+    clearable,
     ...props
   }: TownshipDropdownProps,
   ref: React.ForwardedRef<HTMLButtonElement>
@@ -202,11 +216,18 @@ const TownshipDropdownComponent = (
 
   const handleSelect = useCallback(
     (township: Township) => {
+      if (selected?.id === township.id && clearable) {
+        setSelected(undefined)
+        //@ts-expect-error
+        onChange?.(null)
+        setOpen(false)
+        return
+      }
       setSelected(township)
       onChange?.(township)
       setOpen(false)
     },
-    [onChange]
+    [onChange, selected, clearable]
   )
 
   return (

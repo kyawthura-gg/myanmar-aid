@@ -287,15 +287,12 @@ export function CampaignForm({ defaultValues }: CampaignFormProps) {
                     <RegionDropdown
                       options={states}
                       onChange={(location) => {
-                        field.onChange(
-                          location.regionCode === field.value
-                            ? undefined
-                            : location.regionCode
-                        )
-                        form.setValue("townshipCode", undefined)
+                        field.onChange(location?.regionCode ?? null)
+                        form.setValue("townshipCode", null)
                       }}
                       defaultValue={defaultValues?.regionCode ?? undefined}
                       placeholder="Select state/region"
+                      clearable
                     />
                   </FormControl>
                   <FormMessage />
@@ -313,11 +310,7 @@ export function CampaignForm({ defaultValues }: CampaignFormProps) {
                     <TownshipDropdown
                       options={townshipsForSelectedRegion}
                       onChange={(location) =>
-                        field.onChange(
-                          location.townshipCode === field.value
-                            ? undefined
-                            : location.townshipCode
-                        )
+                        field.onChange(location?.townshipCode ?? null)
                       }
                       placeholder={
                         form.watch("regionCode")
@@ -326,6 +319,7 @@ export function CampaignForm({ defaultValues }: CampaignFormProps) {
                       }
                       disabled={!form.watch("regionCode")}
                       defaultValue={defaultValues?.townshipCode ?? undefined}
+                      clearable
                     />
                   </FormControl>
                   <FormMessage />
