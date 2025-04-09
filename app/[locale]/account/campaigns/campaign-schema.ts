@@ -8,6 +8,8 @@ export const contactTypeList = [
   "tiktok",
   "whatsapp",
   "telegram",
+  "email",
+  "website",
 ] as const
 
 export const paymentMethodSchema = z.object({
@@ -42,8 +44,8 @@ export const baseCampaignSchema = {
     .min(3, "Title must be at least 3 characters")
     .max(100, "Title must be less than 100 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
-  regionCode: z.string().min(2, "Invalid region"),
-  townshipCode: z.string().min(2, "Invalid township"),
+  regionCode: z.string().nullish(),
+  townshipCode: z.string().nullish(),
   categories: z.string().array().min(1, "At least one category is required"),
   contactMethods: contactSchema,
   payments: z

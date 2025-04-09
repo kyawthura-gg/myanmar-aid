@@ -88,11 +88,11 @@ model Campaign {
   title          String
   description    String
   accountType    String //  "individual" or "org" this is automatically set to user's accountType when isAdmin is false
-  regionCode     String
-  townshipCode   String
+  regionCode     String?
+  townshipCode   String?
   photos         String // stringify array of image URLs
   categories     String // stringify array of categories
-  contactMethods String // stringify array of type, value. type: "phone" | "viber" | "facebook" | "instagram" | "tiktok" | "whatsapp" | "telegram"
+  contactMethods String // stringify array of type, value. type: "phone" | "viber" | "facebook" | "instagram" | "tiktok" | "whatsapp" | "telegram" | "email" | "website"
   status         String // "pending", "active", "rejected"
   createdAt      DateTime @default(now())
   updatedAt      DateTime @default(now())
@@ -100,8 +100,8 @@ model Campaign {
   // Relations
   userId    String
   user      User              @relation(fields: [userId], references: [id])
-  region    Region            @relation(fields: [regionCode], references: [regionCode])
-  township  Township          @relation(fields: [townshipCode], references: [townshipCode])
+  region    Region?           @relation(fields: [regionCode], references: [regionCode])
+  township  Township?         @relation(fields: [townshipCode], references: [townshipCode])
   payments  CampaignBanking[]
   donations Donation[]
 

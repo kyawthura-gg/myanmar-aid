@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { signIn, getSession } from "@/lib/auth-client"
+import { getSession, signIn } from "@/lib/auth-client"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
@@ -37,10 +37,9 @@ export function LoginForm() {
           // Check if user is admin and redirect accordingly
           const isAdmin = data?.user?.isAdmin
           const redirectPath = isAdmin ? "/admin" : "/account/campaigns"
-          
+
           toast.success("You have been logged in!")
           router.replace(redirectPath)
-
         },
       }
     )

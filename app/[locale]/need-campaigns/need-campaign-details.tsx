@@ -28,6 +28,7 @@ import {
   CreditCardIcon,
   ExternalLinkIcon,
   LinkIcon,
+  MailIcon,
   MapPin,
   MessageSquare,
   PhoneIcon,
@@ -185,22 +186,27 @@ export function NeedCampaignDetails({ campaign }: { campaign: RouterOutput }) {
                   </div>
 
                   {/* Location */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <div className="bg-blue-50 p-2 rounded-full">
-                        <MapPin className="h-4 w-4 text-blue-500" />
+                  {campaign?.region?.nameEn ? (
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <div className="bg-blue-50 p-2 rounded-full">
+                          <MapPin className="h-4 w-4 text-blue-500" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium">Location</h4>
+                          <p className="text-sm text-muted-foreground">
+                            Campaign area
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="font-medium">Location</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Campaign area
-                        </p>
+                      <div className="font-semibold pl-4">
+                        {campaign?.township?.nameEn
+                          ? `${campaign.township.nameEn}, `
+                          : ""}
+                        {campaign.region.nameEn}
                       </div>
                     </div>
-                    <div className="font-semibold pl-4">
-                      {campaign.township.nameEn}, {campaign.region.nameEn}
-                    </div>
-                  </div>
+                  ) : null}
                 </div>
               </div>
 
@@ -762,6 +768,14 @@ export function NeedCampaignDetails({ campaign }: { campaign: RouterOutput }) {
                         </svg>
                       ),
                       label: "Telegram",
+                    },
+                    website: {
+                      icon: <LinkIcon className="w-4 h-4 text-blue-500" />,
+                      label: "Website",
+                    },
+                    email: {
+                      icon: <MailIcon className="w-4 h-4" />,
+                      label: "Email",
                     },
                   }
 

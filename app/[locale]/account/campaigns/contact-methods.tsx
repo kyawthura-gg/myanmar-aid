@@ -19,9 +19,9 @@ import {
 } from "@/components/ui/select"
 import { Plus, Trash2 } from "lucide-react"
 import { useFieldArray, useFormContext } from "react-hook-form"
+import type { z } from "zod"
+import type { campaignFormSchema } from "./campaign-form"
 import type { contactTypeList } from "./campaign-schema"
-import { campaignFormSchema } from "./campaign-form"
-import { z } from "zod"
 
 export type CampaignFormValues = z.infer<typeof campaignFormSchema>
 
@@ -29,6 +29,8 @@ type ContactType = (typeof contactTypeList)[number]
 
 const contactTypePlaceholders: Record<ContactType, string> = {
   phone: "Enter phone number",
+  website: "Enter website URL",
+  email: "Enter email address",
   viber: "Enter Viber number",
   facebook: "Enter Facebook profile link",
   instagram: "Enter Instagram profile link",
@@ -39,6 +41,8 @@ const contactTypePlaceholders: Record<ContactType, string> = {
 
 const contactTypeLabels: Record<ContactType, string> = {
   phone: "Phone Number",
+  website: "Website",
+  email: "Email Address",
   facebook: "Facebook Profile",
   viber: "Viber Number",
   telegram: "Telegram",
