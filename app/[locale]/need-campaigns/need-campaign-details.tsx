@@ -371,10 +371,13 @@ export function NeedCampaignDetails({ campaign }: { campaign: RouterOutput }) {
 
                       <div className="space-y-3">
                         {/* Country info for all methods */}
-                        <p className="text-sm text-muted-foreground">
-                          <MapPin className="h-3 w-3 inline mr-1" />
-                          {payment.country}
-                        </p>
+                        {payment.methodType !== "link" &&
+                        payment.methodType !== "crypto" ? (
+                          <p className="text-sm text-muted-foreground">
+                            <MapPin className="h-3 w-3 inline mr-1" />
+                            {payment.country}
+                          </p>
+                        ) : null}
 
                         {payment.methodType === "bank" && (
                           <div className="grid gap-2 text-sm">
