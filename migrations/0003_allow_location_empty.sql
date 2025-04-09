@@ -2,6 +2,9 @@
 -- RedefineTables
 PRAGMA defer_foreign_keys=ON;
 PRAGMA foreign_keys=OFF;
+CREATE TABLE "CampaignBanking_backup" AS
+SELECT * FROM "CampaignBanking";
+
 CREATE TABLE "new_Campaign" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "title" TEXT NOT NULL,
@@ -25,6 +28,16 @@ DROP TABLE "Campaign";
 ALTER TABLE "new_Campaign" RENAME TO "Campaign";
 CREATE INDEX "Campaign_regionCode_idx" ON "Campaign"("regionCode");
 CREATE INDEX "Campaign_townshipCode_idx" ON "Campaign"("townshipCode");
+
+UPDATE "CampaignBanking"
+SET "campaignId" = (
+    SELECT cb."campaignId"
+    FROM "CampaignBanking_backup" cb
+    WHERE cb."id" = "CampaignBanking"."id"
+);
+
+-- Drop backup
+DROP TABLE "CampaignBanking_backup";
 PRAGMA foreign_keys=ON;
 PRAGMA defer_foreign_keys=OFF;
 
