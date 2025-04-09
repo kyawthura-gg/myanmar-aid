@@ -253,7 +253,7 @@ export default function Home() {
                     <Link
                       key={campaign.id}
                       href={`/need-campaigns/${campaign.id}`}
-                      className="block group"
+                      className="w-full overflow-hidden block group"
                     >
                       <Card className="h-full overflow-hidden">
                         <div className="relative">
